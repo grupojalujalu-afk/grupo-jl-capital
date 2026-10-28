@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRUPO J&L CAPITAL</title>
+<style>
+:root {
+  --site-primary: #171B3A;
+  --site-secondary: #7664E8;
+  --site-background: #F4F5FB;
+  --site-on-primary: #FFFFFF;
+  --site-on-secondary: #FFFFFF;
+  --site-on-background: #171B3A;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  --surface: light-dark(#FFFFFF, #202238);
+  --surface-soft: light-dark(#F7F7FC, #272A43);
+  --text: light-dark(#171B3A, #F2F3FF);
+  --muted: light-dark(#737891, #B6B9D0);
+  --border: light-dark(#E5E7F1, #3B3E59);
+  --good: #138A66;
+  --warning: #B7791F;
+  --danger: #C5485A;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: var(--site-background); color: var(--text); }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+#app { min-height: 100vh; width: 100%; border-radius: 0; background-color: var(--site-background); color: var(--site-on-background); }
+.topbar { background: var(--site-primary); color: var(--site-on-primary); padding: calc(18px * var(--site-spacing-scale)) clamp(18px, 4vw, 52px); display:flex; justify-content:space-between; align-items:center; gap:18px; }
+.brand { display:flex; gap:12px; align-items:center; }
+.brand-mark { height:44px; width:44px; border-radius:14px; background:var(--site-secondary); display:grid; place-items:center; flex:none; }
+.brand-mark svg { width:26px; height:26px; }
+.brand-name { font-size:15px; letter-spacing:.08em; font-weight:800; line-height:1.25; }
+.brand-sub { font-size:10px; color:#C9CBE0; letter-spacing:.17em; margin-top:4px; }
+.top-actions { display:flex; align-items:center; gap:10px; }
+.ghost { color:white; border:1px solid #5A5D7B; background:transparent; padding:10px 15px; border-radius:12px; }
+.primary { background:var(--site-secondary); color:white; border:0; padding:11px 16px; border-radius:12px; font-weight:700; box-shadow:0 6px 18px #7664e82b; }
+.primary:hover { filter:brightness(1.06); }
+main { max-width:1200px; margin:0 auto; padding:clamp(20px,4vw,48px); }
+.view { display:none; } .view.active { display:block; }
+.hero { display:grid; grid-template-columns:1.08fr .92fr; gap:40px; align-items:center; padding:32px 0 45px; }
+.eyebrow { display:inline-flex; align-items:center; gap:8px; color:var(--site-secondary); font-size:12px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; }
+.dot { height:7px; width:7px; background:var(--site-secondary); border-radius:50%; }
+h1,h2,h3,p { margin-top:0; }
+h1 { font-family:var(--site-font-heading); font-size:calc(clamp(38px,5.4vw,66px) * var(--site-heading-scale)); line-height:1.02; letter-spacing:-.055em; margin:17px 0 20px; color:var(--text); }
+.gradient { color:var(--site-secondary); }
+.lead { font-size:17px; line-height:1.75; color:var(--muted); max-width:590px; }
+.hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:27px; }
+.secondary { color:var(--text); background:var(--surface); border:1px solid var(--border); padding:11px 16px; border-radius:12px; font-weight:700; }
+.trustline { display:flex; gap:20px; flex-wrap:wrap; margin-top:27px; color:var(--muted); font-size:12px; }
+.trustline span { display:flex; align-items:center; gap:7px; }
+.check { color:var(--good); font-weight:900; }
+.mock-card { background:var(--site-primary); color:#fff; border-radius:28px; padding:25px; box-shadow:0 25px 70px #20234c26; position:relative; overflow:hidden; min-height:340px; }
+.mock-card:before,.mock-card:after { content:""; position:absolute; border-radius:50%; opacity:var(--site-decoration-opacity); pointer-events:none; }
+.mock-card:before { width:230px;height:230px;right:-85px;top:-75px;background:#7664E8;opacity:.32; }
+.mock-card:after { width:190px;height:190px;right:55px;bottom:-125px;border:1px solid #a9a0ff; }
+.card-top,.balance-row,.stat-grid,.chart-head { position:relative; z-index:1; }
+.card-top { display:flex; justify-content:space-between; align-items:center; color:#D2D4E8; font-size:12px; }
+.pill { border-radius:999px; padding:7px 10px; background:#ffffff18; color:#DCD9FF; font-size:11px; }
+.balance-label { margin-top:34px; color:#C7C9DE; font-size:13px; }
+.balance { font-size:36px; letter-spacing:-.04em; font-weight:800; margin:8px 0 20px; }
+.balance small { font-size:16px; font-weight:500; color:#C7C9DE; }
+.balance-row { display:flex; gap:10px; }
+.balance-action { flex:1; background:#ffffff13; border:1px solid #ffffff22; color:white; border-radius:13px; padding:12px; font-size:12px; }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:22px; }
+.mini-stat { background:#ffffff0d; border:1px solid #ffffff18; padding:13px; border-radius:14px; }
+.mini-stat span { display:block; font-size:11px; color:#C5C8DF; }
+.mini-stat strong { display:block; font-size:18px; margin-top:7px; }
+.section-head { display:flex; align-items:end; justify-content:space-between; gap:18px; margin:16px 0 22px; }
+.section-head h2 { font-size:calc(28px * var(--site-heading-scale)); letter-spacing:-.04em; margin:0 0 7px; }
+.section-head p { margin:0; color:var(--muted); line-height:1.6; }
+.feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.feature { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:22px; }
+.feature-icon { width:43px; height:43px; display:grid; place-items:center; background:light-dark(#EFEDFF,#373154); color:var(--site-secondary); border-radius:14px; margin-bottom:17px; }
+.feature-icon svg { width:22px;height:22px; }
+.feature h3 { font-size:16px; margin-bottom:8px; }
+.feature p { font-size:13px; color:var(--muted); line-height:1.65; margin:0; }
+.disclaimer { border:1px solid #E9D8A6; background:light-dark(#FFF9E8,#342D1C); color:light-dark(#795A17,#F5D991); padding:13px 16px; border-radius:13px; font-size:12px; line-height:1.6; margin-top:24px; }
+.auth-wrap { max-width:510px; margin:22px auto; }
+.panel { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:clamp(22px,4vw,34px); box-shadow:0 18px 50px #1e23430a; }
+.panel h2 { font-size:28px; letter-spacing:-.04em; margin-bottom:8px; }
+.panel .sub { color:var(--muted); line-height:1.6; font-size:14px; margin-bottom:24px; }
+.field { display:block; margin-bottom:15px; }
+.field span { display:block; font-size:12px; font-weight:700; margin-bottom:7px; }
+.field input,.field select { width:100%; padding:13px 14px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); outline:none; }
+.field input:focus,.field select:focus { border-color:var(--site-secondary); box-shadow:0 0 0 3px #7664e820; }
+.full { width:100%; }
+.small-note { color:var(--muted); font-size:12px; line-height:1.6; margin:16px 0 0; }
+.text-button { background:none; border:0; color:var(--site-secondary); font-weight:800; padding:0; }
+.dashboard-layout { display:grid; grid-template-columns:220px 1fr; gap:22px; }
+.sidebar { background:var(--site-primary); color:white; border-radius:22px; padding:18px 12px; align-self:start; }
+.side-label { color:#9FA3C3; font-size:10px; letter-spacing:.14em; text-transform:uppercase; padding:12px 12px 8px; }
+.side-link { display:flex; gap:11px; align-items:center; border:0; background:transparent; color:#D9DBEA; width:100%; text-align:left; padding:12px; border-radius:12px; font-size:13px; margin-bottom:3px; }
+.side-link.active,.side-link:hover { background:#7664E8; color:white; }
+.side-link svg { width:17px;height:17px; }
+.dash-main { min-width:0; }
+.dash-head { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:22px; }
+.dash-head h2 { margin:0 0 5px; font-size:27px; letter-spacing:-.04em; }
+.dash-head p { margin:0; color:var(--muted); font-size:13px; }
+.avatar { height:40px; width:40px; display:grid; place-items:center; background:#E8E4FF; color:#5B4AC6; border-radius:50%; font-weight:800; }
+.kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; margin-bottom:16px; }
+.kpi { background:var(--surface); border:1px solid var(--border); border-radius:17px; padding:18px; }
+.kpi span { color:var(--muted); font-size:12px; }
+.kpi strong { display:block; font-size:24px; margin:9px 0 6px; letter-spacing:-.04em; }
+.kpi small { color:var(--good); font-size:11px; }
+.content-grid { display:grid; grid-template-columns:1.25fr .75fr; gap:15px; }
+.box { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:20px; min-width:0; }
+.box h3 { margin-bottom:4px; font-size:15px; }
+.box .muted { color:var(--muted); font-size:12px; }
+.chart { height:155px; display:flex; align-items:end; gap:10px; padding-top:18px; border-bottom:1px solid var(--border); margin-top:12px; }
+.bar-wrap { flex:1; height:100%; display:flex; flex-direction:column; justify-content:end; align-items:center; gap:7px; }
+.bar { width:min(30px,80%); background:linear-gradient(180deg,var(--site-secondary),#B7ADFF); border-radius:7px 7px 2px 2px; min-height:8px; }
+.bar-label { font-size:10px; color:var(--muted); }
+.transaction { display:flex; align-items:center; gap:10px; padding:13px 0; border-bottom:1px solid var(--border); }
+.transaction:last-child { border:0; padding-bottom:0; }
+.trans-icon { height:36px;width:36px;border-radius:12px;background:var(--surface-soft);display:grid;place-items:center;color:var(--site-secondary);flex:none; }
+.trans-icon svg { width:17px;height:17px; }
+.trans-info { min-width:0; flex:1; }
+.trans-info strong { display:block;font-size:12px; }
+.trans-info small { display:block;color:var(--muted);font-size:10px;margin-top:4px; }
+.trans-amount { text-align:right;font-weight:800;font-size:12px;white-space:nowrap; }
+.trans-amount small { display:block;color:var(--good);font-weight:600;font-size:10px;margin-top:4px; }
+.quick-actions { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+.quick { background:var(--surface); border:1px solid var(--border); border-radius:15px; padding:14px 8px; text-align:center; color:var(--text); font-size:11px; font-weight:700; }
+.quick svg { display:block; margin:0 auto 8px; color:var(--site-secondary); width:21px;height:21px; }
+.demo-switch { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:12px 14px; border:1px dashed #B9B3ED; background:light-dark(#F4F1FF,#2C2943); border-radius:13px; margin-bottom:20px; font-size:12px; }
+.demo-switch strong { margin-right:auto; }
+.notice { padding:12px 14px; background:var(--surface-soft); border-radius:12px; font-size:12px; color:var(--muted); line-height:1.6; margin-top:14px; }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:12px; white-space:nowrap; }
+th,td { text-align:left; padding:13px 10px; border-bottom:1px solid var(--border); }
+th { color:var(--muted); font-weight:700; }
+.status { border-radius:999px; padding:5px 8px; background:light-dark(#FFF1D5,#3C3020); color:var(--warning); font-size:10px; font-weight:800; }
+.status.good { background:light-dark(#DDF7EB,#183B31); color:var(--good); }
+.status.bad { background:light-dark(#FFE3E8,#47262E); color:var(--danger); }
+.admin-actions { display:flex; gap:6px; }
+.admin-actions button { border:1px solid var(--border); background:var(--surface); color:var(--text); padding:6px 8px; border-radius:8px; font-size:10px; }
+footer { max-width:1200px; margin:0 auto; padding:20px clamp(20px,4vw,48px) 32px; color:var(--muted); font-size:11px; display:flex; justify-content:space-between; gap:15px; border-top:1px solid var(--border); }
+.toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:var(--site-primary); color:white; padding:13px 18px; border-radius:12px; box-shadow:0 12px 35px #11142c30; z-index:10; font-size:13px; display:none; max-width:calc(100% - 32px); }
+@media(max-width:850px) { .hero { grid-template-columns:1fr; gap:25px; padding-top:20px; } .mock-card { max-width:540px; width:100%; margin:auto; } .feature-grid { grid-template-columns:1fr 1fr; } .dashboard-layout { grid-template-columns:1fr; } .sidebar { display:flex; overflow-x:auto; gap:4px; padding:9px; } .side-label { display:none; } .side-link { white-space:nowrap; width:auto; margin:0; } .content-grid { grid-template-columns:1fr; } }
+@media(max-width:560px) { .topbar { padding:14px 16px; } .brand-name { font-size:12px; } .brand-sub { font-size:8px; } .brand-mark { width:38px;height:38px; } .top-actions .ghost { display:none; } main { padding:20px 16px; } .hero { padding:20px 0 32px; } .lead { font-size:15px; } .feature-grid { grid-template-columns:1fr; } .feature { padding:18px; } .kpis { grid-template-columns:1fr 1fr; } .kpi:last-child { grid-column:1/-1; } .kpi { padding:14px; } .kpi strong { font-size:21px; } .quick-actions { grid-template-columns:repeat(2,1fr); } .dash-head h2 { font-size:23px; } .section-head { align-items:start; flex-direction:column; } footer { flex-direction:column; } }
+</style>
+</head>
+<body>
+<div id="app">
+<header class="topbar">
+  <div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M3 9h18M5 9v10m4-10v10m6-10v10m4-10v10M3 19h18M2 7l10-5 10 5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="brand-name">GRUPO J&L CAPITAL</div><div class="brand-sub">SOLUCIONES FINANCIERAS</div></div></div>
+  <div class="top-actions"><button class="ghost" onclick="showView('login')">Iniciar sesión</button><button class="primary" onclick="showView('signup')">Solicitar cuenta <span aria-hidden="true">↗</span></button></div>
+</header>
+<main>
+<section class="view active" id="home">
+  <div class="hero">
+    <div><div class="eyebrow"><span class="dot"></span> Tu futuro, con visión financiera</div><h1>Tu dinero.<br><span class="gradient">Tus metas.</span><br>Tu camino.</h1><p class="lead">Una experiencia financiera digital para organizar tus ahorros, explorar opciones de financiamiento y dar seguimiento a tus objetivos desde un solo lugar.</p><div class="hero-actions"><button class="primary" onclick="showView('signup')">Solicitar una cuenta <span aria-hidden="true">→</span></button><button class="secondary" onclick="showView('login')">Ya tengo una cuenta</button><button class="secondary" onclick="showView('dashboard')">Ver demo del portal</button></div><div class="trustline"><span><b class="check">✓</b> Acceso personal</span><span><b class="check">✓</b> Seguimiento de movimientos</span><span><b class="check">✓</b> Atención clara</span></div></div>
+    <div class="mock-card"><div class="card-top"><span>VISTA PREVIA DEL PORTAL</span><span class="pill">DEMO · DATOS FICTICIOS</span></div><div class="balance-label">Saldo de ahorro de ejemplo</div><div class="balance">S/ 8,450<small>.00</small></div><div class="balance-row"><button class="balance-action" onclick="showView('dashboard')">＋ Solicitar depósito</button><button class="balance-action" onclick="showView('dashboard')">↗ Solicitar retiro</button></div><div class="stat-grid"><div class="mini-stat"><span>Ahorro acumulado</span><strong>S/ 8,450</strong></div><div class="mini-stat"><span>Inversión de ejemplo</span><strong>S/ 2,000</strong></div></div></div>
+  </div>
+  <div class="section-head"><div><h2>Todo organizado en un solo lugar</h2><p>Funciones previstas para el portal de GRUPO J&L CAPITAL.</p></div></div>
+  <div class="feature-grid">
+    <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v13H3zM3 10h18M7 4h10M7 14h3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Ahorro y movimientos</h3><p>Consulta de saldos, solicitudes de depósito y retiro, con seguimiento de estados e historial.</p></article>
+    <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v15H4zM8 9h8M8 13h5M8 17h8" stroke-linecap="round"/></svg></div><h3>Préstamos y cuotas</h3><p>Solicitud sujeta a evaluación, simulación de cuotas y consulta de pagos y vencimientos.</p></article>
+    <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h17M8 15l4-4 3 2 5-7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Inversiones y objetivos</h3><p>Vista de productos, plazos y rendimientos ilustrativos claramente identificados como simulaciones.</p></article>
+  </div>
+  <div class="disclaimer"><strong>Prototipo de demostración:</strong> los saldos, movimientos y productos que se muestran son ficticios. Este sitio no recibe dinero, no ejecuta transferencias ni confirma cuentas. Las operaciones reales requerirán sistemas seguros, verificación y revisión legal aplicable.</div>
+</section>
+<section class="view" id="login"><div class="auth-wrap"><div class="panel"><div class="eyebrow"><span class="dot"></span> Acceso de clientes</div><h2>Bienvenido de nuevo</h2><p class="sub">Ingresa a tu espacio financiero personal. Esta pantalla es una demostración y no valida credenciales reales.</p><form onsubmit="event.preventDefault();showView('dashboard');toast('Demo abierta: estás viendo datos ficticios, no una cuenta real.');"><label class="field"><span>Correo electrónico</span><input type="email" required placeholder="tu@correo.com"></label><label class="field"><span>Contraseña</span><input type="password" required minlength="4" placeholder="Ingresa tu contraseña"></label><button class="primary full" type="submit">Ingresar a la demo →</button></form><p class="small-note">¿Todavía no tienes una cuenta? <button class="text-button" onclick="showView('signup')">Solicítala aquí</button></p><div class="notice">En la versión real, las contraseñas se protegerán mediante un proveedor de autenticación seguro; nunca se guardarán en Google Sheets.</div></div></div></section>
+<section class="view" id="signup"><div class="auth-wrap"><div class="panel"><div class="eyebrow"><span class="dot"></span> Registro con aprobación</div><h2>Solicita tu cuenta</h2><p class="sub">Completa tus datos para enviar una solicitud de registro. El acceso deberá habilitarse después de la revisión del administrador.</p><form id="signupForm"><label class="field"><span>Nombres y apellidos</span><input id="fullName" required placeholder="Como figura en tu documento"></label><label class="field"><span>Correo electrónico</span><input id="email" type="email" required placeholder="tu@correo.com"></label><label class="field"><span>Teléfono de contacto</span><input id="phone" type="tel" required placeholder="Número de contacto"></label><label class="field"><span>Tipo de solicitud</span><select id="accountType" required><option value="">Selecciona una opción</option><option>Cuenta de cliente</option><option>Consulta sobre ahorro</option><option>Consulta sobre préstamos</option><option>Consulta sobre inversiones</option></select></label><button class="primary full" type="submit">Enviar solicitud →</button></form><p class="small-note">Enviar este formulario solo agrega una solicitud local a esta demo. No se envía a un servidor ni crea una cuenta real.</p><div class="notice">Por seguridad, no ingreses contraseñas, números completos de tarjetas ni datos bancarios en este prototipo.</div></div></div></section>
+<section class="view" id="dashboard">
+  <div class="demo-switch"><strong>Modo de demostración</strong><span>Datos inventados · Sin operaciones reales</span><button class="secondary" onclick="showView('admin')">Abrir panel admin →</button></div>
+  <div class="dashboard-layout"><aside class="sidebar"><div class="side-label">Menú del cliente</div><button class="side-link active" onclick="dashTab(this,'resumen')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11 12 3l9 8v9H3z"/><path d="M9 20v-6h6v6"/></svg>Resumen</button><button class="side-link" onclick="dashTab(this,'ahorro')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 14h4"/></svg>Mi ahorro</button><button class="side-link" onclick="dashTab(this,'prestamos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h4"/></svg>Préstamos</button><button class="side-link" onclick="dashTab(this,'inversiones')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h17M8 15l4-4 3 2 5-7"/></svg>Inversiones</button><button class="side-link" onclick="dashTab(this,'movimientos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Movimientos</button><div class="side-label">Cuenta</div><button class="side-link" onclick="showView('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 17l5-5-5-5M15 12H3M21 4v16"/></svg>Salir de demo</button></aside>
+  <div class="dash-main"><div class="dash-head"><div><h2 id="dashTitle">Hola, Andrea 👋</h2><p id="dashSubtitle">Aquí tienes un resumen de tu actividad financiera.</p></div><div class="avatar">AR</div></div><div id="dashContent"><div class="kpis"><div class="kpi"><span>Saldo de ahorro</span><strong>S/ 8,450.00</strong><small>● Saldo de ejemplo</small></div><div class="kpi"><span>Inversiones simuladas</span><strong>S/ 2,000.00</strong><small>● Datos ilustrativos</small></div><div class="kpi"><span>Próxima cuota simulada</span><strong>S/ 245.00</strong><small style="color:var(--muted)">Vencimiento: 15 nov. 2026</small></div></div><div class="quick-actions"><button class="quick" onclick="actionDemo('Solicitud de depósito')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>Solicitar depósito</button><button class="quick" onclick="actionDemo('Solicitud de retiro')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Solicitar retiro</button><button class="quick" onclick="actionDemo('Simulador de préstamo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2M8 15h2m4 0h2"/></svg>Simular préstamo</button><button class="quick" onclick="actionDemo('Consulta de inversiones')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h17M8 15l4-4 3 2 5-7"/></svg>Ver inversiones</button></div><div class="content-grid"><div class="box"><h3>Evolución del ahorro</h3><p class="muted">Montos ficticios de los últimos 6 meses</p><div class="chart"><div class="bar-wrap"><div class="bar" style="height:34%"></div><span class="bar-label">Jun</span></div><div class="bar-wrap"><div class="bar" style="height:44%"></div><span class="bar-label">Jul</span></div><div class="bar-wrap"><div class="bar" style="height:41%"></div><span class="bar-label">Ago</span></div><div class="bar-wrap"><div class="bar" style="height:63%"></div><span class="bar-label">Sep</span></div><div class="bar-wrap"><div class="bar" style="height:72%"></div><span class="bar-label">Oct</span></div><div class="bar-wrap"><div class="bar" style="height:90%"></div><span class="bar-label">Nov</span></div></div></div><div class="box"><h3>Movimientos recientes</h3><p class="muted">Historial ilustrativo</p><div class="transaction"><div class="trans-icon">＋</div><div class="trans-info"><strong>Depósito de ejemplo</strong><small>18 oct. 2026 · Transferencia</small></div><div class="trans-amount">+S/ 500<small>Confirmado</small></div></div><div class="transaction"><div class="trans-icon">↗</div><div class="trans-info"><strong>Retiro de ejemplo</strong><small>12 oct. 2026 · Yape</small></div><div class="trans-amount">−S/ 120<small style="color:var(--muted)">Registrado</small></div></div><div class="transaction"><div class="trans-icon">✦</div><div class="trans-info"><strong>Interés ilustrativo</strong><small>01 oct. 2026</small></div><div class="trans-amount">+S/ 18<small>Simulación</small></div></div></div></div><div class="notice">Todos los datos de este panel son ficticios y solo muestran cómo podría verse tu portal. Las acciones no mueven dinero ni guardan transacciones reales.</div></div></div></div>
+</section>
+<section class="view" id="admin"><div class="demo-switch"><strong>Panel administrativo · Demo</strong><span>Acciones solo locales</span><button class="secondary" onclick="showView('dashboard')">← Portal cliente</button></div><div class="section-head"><div><div class="eyebrow"><span class="dot"></span> Administración</div><h2>Centro de operaciones</h2><p>Ejemplo de cómo revisar solicitudes de registro, depósitos y retiros.</p></div><div class="avatar">JL</div></div><div class="kpis"><div class="kpi"><span>Solicitudes de registro</span><strong id="regCount">3</strong><small style="color:var(--warning)">Pendientes de revisión</small></div><div class="kpi"><span>Depósitos por revisar</span><strong>5</strong><small style="color:var(--warning)">Ejemplo</small></div><div class="kpi"><span>Retiros por revisar</span><strong>2</strong><small style="color:var(--warning)">Ejemplo</small></div></div><div class="box" style="margin-bottom:16px"><h3>Solicitudes de registro</h3><p class="muted" style="margin:5px 0 15px">Aprueba o rechaza solicitudes ficticias. No se crearán usuarios reales.</p><div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Correo</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="registrations"><tr><td>María Torres</td><td>maria.demo@email.com</td><td>Cuenta de cliente</td><td><span class="status">Pendiente</span></td><td><div class="admin-actions"><button onclick="reviewRow(this,true)">Aprobar</button><button onclick="reviewRow(this,false)">Rechazar</button></div></td></tr><tr><td>José Ramírez</td><td>jose.demo@email.com</td><td>Cuenta de cliente</td><td><span class="status">Pendiente</span></td><td><div class="admin-actions"><button onclick="reviewRow(this,true)">Aprobar</button><button onclick="reviewRow(this,false)">Rechazar</button></div></td></tr><tr><td>Lucía Paredes</td><td>lucia.demo@email.com</td><td>Consulta de ahorro</td><td><span class="status good">Revisada</span></td><td><span class="muted">Sin acciones</span></td></tr></tbody></table></div></div><div class="box"><h3>Depósitos y retiros</h3><p class="muted" style="margin:5px 0 15px">Ejemplo de operaciones que deben verificarse antes de confirmar.</p><div class="table-wrap"><table><thead><tr><th>ID</th><th>Operación</th><th>Método</th><th>Importe</th><th>Estado</th><th>Acción</th></tr></thead><tbody><tr><td>DEMO-101</td><td>Depósito</td><td>Yape</td><td>S/ 200.00</td><td><span class="status">Pendiente</span></td><td><button class="secondary" onclick="toast('Demo: en el sistema real, primero se verificaría la recepción del dinero.')">Revisar</button></td></tr><tr><td>DEMO-102</td><td>Retiro</td><td>Transferencia</td><td>S/ 100.00</td><td><span class="status">Pendiente</span></td><td><button class="secondary" onclick="toast('Demo: en producción se validaría el saldo y se registraría la confirmación del pago.')">Revisar</button></td></tr></tbody></table></div><div class="notice">En producción, aprobar una solicitud de depósito no debe equivaler a confirmar el dinero recibido. Cada decisión tendrá usuario responsable, fecha, referencia y registro de auditoría.</div></div></section>
+</main>
+<footer><span>© 2026 GRUPO J&L CAPITAL · Prototipo de interfaz</span><span>Demostración visual · No es una entidad bancaria ni una oferta financiera</span></footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+</div>
+<script>
+const ADMIN_DEMO_PASSWORD='JLC-demo-2026';
+function showView(id){if(id==='admin'&&sessionStorage.getItem('jlcAdminDemo')!=='1'){const entered=prompt('Acceso de administrador de demostración. Ingresa la clave demo:');if(entered!==ADMIN_DEMO_PASSWORD){toast('Acceso administrativo no autorizado.');return;}sessionStorage.setItem('jlcAdminDemo','1');}document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));const target=document.getElementById(id);if(target)target.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+let toastTimer;
+function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.display='none',3800);}
+function actionDemo(name){toast(name+': esta función es ilustrativa. Se conectará en una etapa posterior, con controles de seguridad.');}
+// Mover el simulador de préstamos al panel administrativo.
+document.addEventListener('DOMContentLoaded',function(){
+  const clientButtons=[...document.querySelectorAll('#dashboard .quick')];
+  const loanButton=clientButtons.find(button=>button.textContent.includes('Simular préstamo'));
+  if(loanButton) loanButton.remove();
+  const quickActions=document.querySelector('#dashboard .quick-actions');
+  if(quickActions) quickActions.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';
+  const admin=document.getElementById('admin');
+  if(admin && !document.getElementById('adminLoanCalculator')){
+    const calculator=document.createElement('div');
+    calculator.className='box';
+    calculator.id='adminLoanCalculator';
+    calculator.style.marginBottom='16px';
+    calculator.innerHTML='<h3>Calculadora de préstamos</h3><p class="muted" style="margin:5px 0 15px">Simula cuotas mensuales con una tasa ilustrativa. No representa una oferta de crédito.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px"><label class="field"><span>Importe del préstamo (S/)</span><input id="loanAmount" type="number" min="1" step="0.01" value="3000"></label><label class="field"><span>Tasa mensual (%)</span><input id="loanRate" type="number" min="0" step="0.01" value="3"></label><label class="field"><span>Plazo (meses)</span><input id="loanMonths" type="number" min="1" max="120" step="1" value="12"></label></div><button class="primary" id="calculateLoan" type="button">Calcular cuota</button><div class="notice" id="loanResult" aria-live="polite">Ingresa los datos y calcula una cuota estimada.</div>';
+    const adminHeading=admin.querySelector('.section-head');
+    if(adminHeading) adminHeading.insertAdjacentElement('afterend',calculator); else admin.prepend(calculator);
+    document.getElementById('calculateLoan').addEventListener('click',function(){
+      const principal=Number(document.getElementById('loanAmount').value);
+      const annualOrMonthlyRate=Number(document.getElementById('loanRate').value)/100;
+      const months=Number(document.getElementById('loanMonths').value);
+      const result=document.getElementById('loanResult');
+      if(!Number.isFinite(principal)||principal<=0||!Number.isFinite(annualOrMonthlyRate)||annualOrMonthlyRate<0||!Number.isInteger(months)||months<1||months>120){result.textContent='Verifica el importe, la tasa y el plazo (1 a 120 meses).';return;}
+      const payment=annualOrMonthlyRate===0?principal/months:principal*annualOrMonthlyRate/(1-Math.pow(1+annualOrMonthlyRate,-months));
+      result.textContent='Cuota mensual estimada: S/ '+payment.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})+' · Total estimado: S/ '+(payment*months).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})+'. Simulación ilustrativa.';
+    });
+  }
+});
+document.getElementById('signupForm').addEventListener('submit',function(e){e.preventDefault();const name=document.getElementById('fullName').value.trim();const email=document.getElementById('email').value.trim();const type=document.getElementById('accountType').value;if(!name||!email||!type)return;const tbody=document.getElementById('registrations');const tr=document.createElement('tr');[name,email,type].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});const state=document.createElement('td');state.innerHTML='<span class="status">Pendiente</span>';tr.appendChild(state);const actions=document.createElement('td');actions.innerHTML='<div class="admin-actions"><button onclick="reviewRow(this,true)">Aprobar</button><button onclick="reviewRow(this,false)">Rechazar</button></div>';tr.appendChild(actions);tbody.prepend(tr);const count=document.getElementById('regCount');count.textContent=String(Number(count.textContent)+1);this.reset();showView('admin');toast('Solicitud añadida a la demo local; no se envió a un servidor.');});
+// Control demostrativo de capital, préstamos e intereses.
+(function(){
+  let initialCapital=3000;
+  let availableCapital=initialCapital;
+  let principalOutstanding=0;
+  let interestReceived=0;
+  let staffAllocation=0;
+  let capitalGrowth=0;
+  let loanSequence=1;
+  const loans=[];
+  const money=value=>'S/ '+value.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  function setupCapitalControl(){
+    const admin=document.getElementById('admin');
+    if(!admin||document.getElementById('capitalControl'))return;
+    const panel=document.createElement('div');panel.className='box';panel.id='capitalControl';panel.style.marginBottom='16px';
+    panel.innerHTML='<h3>Control de capital y préstamos</h3><p class="muted" style="margin:5px 0 15px">Registra el capital disponible, el dinero prestado y cómo se distribuyen los intereses cobrados. Datos locales de demostración.</p><div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"><div class="kpi"><span>Capital disponible</span><strong id="capitalAvailable">S/ 3,000.00</strong><small>Disponible para nuevos préstamos</small></div><div class="kpi"><span>Capital colocado en préstamos</span><strong id="capitalLent">S/ 0.00</strong><small>Principal pendiente de recuperar</small></div><div class="kpi"><span>Intereses cobrados</span><strong id="capitalInterest">S/ 0.00</strong><small>Interés recibido acumulado</small></div><div class="kpi"><span>Asignado a personal</span><strong id="capitalStaff">S/ 0.00</strong><small>Parte de intereses destinada a pagos</small></div><div class="kpi"><span>Intereses reinvertidos</span><strong id="capitalGrowth">S/ 0.00</strong><small>Parte sumada al capital disponible</small></div></div><div class="content-grid" style="margin-top:16px"><div class="box"><h3>Registrar nuevo préstamo</h3><p class="muted" style="margin:5px 0 12px">El importe se descuenta del capital disponible.</p><form id="newCapitalLoan"><label class="field"><span>Cliente (nombre de ejemplo)</span><input id="capitalLoanClient" maxlength="80" required placeholder="Nombre del cliente"></label><label class="field"><span>Importe del préstamo (S/)</span><input id="capitalLoanAmount" type="number" min="0.01" step="0.01" required placeholder="Ej. 500.00"></label><button class="primary" type="submit">Registrar préstamo</button></form></div><div class="box"><h3>Registrar pago recibido</h3><p class="muted" style="margin:5px 0 12px">El principal recuperado vuelve al capital. Los intereses se reparten entre personal y reinversión.</p><form id="capitalLoanPayment"><label class="field"><span>Préstamo</span><select id="capitalPaymentLoan" required><option value="">Selecciona un préstamo</option></select></label><label class="field"><span>Principal devuelto (S/)</span><input id="capitalPrincipalPaid" type="number" min="0" step="0.01" value="0" required></label><label class="field"><span>Interés cobrado (S/)</span><input id="capitalInterestPaid" type="number" min="0" step="0.01" value="0" required></label><label class="field"><span>Porcentaje de intereses para personal (%)</span><input id="capitalStaffPercent" type="number" min="0" max="100" step="1" value="50" required></label><button class="primary" type="submit">Registrar pago</button></form></div></div><div class="table-wrap" style="margin-top:18px"><table><thead><tr><th>ID</th><th>Cliente</th><th>Importe inicial</th><th>Principal pendiente</th><th>Interés cobrado</th><th>Estado</th></tr></thead><tbody id="capitalLoanRows"><tr><td colspan="6">Aún no se registraron préstamos en esta sesión.</td></tr></tbody></table></div><div class="notice">Regla de control: préstamo nuevo = baja el capital disponible; devolución del principal = vuelve al capital; interés cobrado = se divide entre personal y capital según el porcentaje configurado. Esta demo no guarda datos al cerrar o recargar la página y no registra dinero real.</div>';
+    const metrics=panel.querySelector('.kpis');const totalCard=document.createElement('div');totalCard.className='kpi';totalCard.innerHTML='<span>Capital total gestionado</span><strong id="capitalTotal">S/ 3,000.00</strong><small>Disponible + principal pendiente</small>';metrics.insertAdjacentElement('afterbegin',totalCard);
+    const heading=admin.querySelector('.section-head');if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
+    function update(){
+      document.getElementById('capitalAvailable').textContent=money(availableCapital);
+      document.getElementById('capitalTotal').textContent=money(availableCapital+principalOutstanding);
+      document.getElementById('capitalLent').textContent=money(principalOutstanding);
+      document.getElementById('capitalInterest').textContent=money(interestReceived);
+      document.getElementById('capitalStaff').textContent=money(staffAllocation);
+      document.getElementById('capitalGrowth').textContent=money(capitalGrowth);
+      const select=document.getElementById('capitalPaymentLoan');const old=select.value;select.innerHTML='<option value="">Selecciona un préstamo</option>';
+      loans.filter(loan=>loan.outstanding>0).forEach(loan=>{const option=document.createElement('option');option.value=loan.id;option.textContent=loan.id+' · '+loan.client+' · pendiente '+money(loan.outstanding);select.appendChild(option);});if([...select.options].some(option=>option.value===old))select.value=old;
+      const body=document.getElementById('capitalLoanRows');body.replaceChildren();if(!loans.length){body.innerHTML='<tr><td colspan="6">Aún no se registraron préstamos en esta sesión.</td></tr>';return;}
+      loans.forEach(loan=>{const row=document.createElement('tr');[loan.id,loan.client,money(loan.amount),money(loan.outstanding),money(loan.interest),loan.outstanding===0?'Cancelado (demo)':'Activo (demo)'].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);});body.appendChild(row);});
+    }
+    document.getElementById('newCapitalLoan').addEventListener('submit',event=>{event.preventDefault();const client=document.getElementById('capitalLoanClient').value.trim();const amount=Number(document.getElementById('capitalLoanAmount').value);if(!client||!Number.isFinite(amount)||amount<=0){toast('Ingresa un cliente y un importe válido.');return;}if(amount>availableCapital){toast('Capital insuficiente. Disponible: '+money(availableCapital));return;}const loan={id:'PREST-'+String(loanSequence++).padStart(3,'0'),client,amount,outstanding:amount,interest:0};loans.push(loan);availableCapital-=amount;principalOutstanding+=amount;update();event.target.reset();toast('Préstamo registrado en la demo; el capital disponible disminuyó.');});
+    document.getElementById('capitalLoanPayment').addEventListener('submit',event=>{event.preventDefault();const id=document.getElementById('capitalPaymentLoan').value;const loan=loans.find(item=>item.id===id);const principal=Number(document.getElementById('capitalPrincipalPaid').value);const interest=Number(document.getElementById('capitalInterestPaid').value);const percent=Number(document.getElementById('capitalStaffPercent').value);if(!loan){toast('Selecciona un préstamo válido.');return;}if(!Number.isFinite(principal)||principal<0||principal>loan.outstanding||!Number.isFinite(interest)||interest<0||!Number.isFinite(percent)||percent<0||percent>100||principal+interest<=0){toast('Revisa los importes y el porcentaje del personal.');return;}const staff=interest*percent/100;const reinvested=interest-staff;loan.outstanding-=principal;loan.interest+=interest;principalOutstanding-=principal;availableCapital+=principal+reinvested;interestReceived+=interest;staffAllocation+=staff;capitalGrowth+=reinvested;update();document.getElementById('capitalPrincipalPaid').value='0';document.getElementById('capitalInterestPaid').value='0';toast('Pago registrado. Personal: '+money(staff)+' · Interés reinvertido: '+money(reinvested)+'.');});
+    update();
+  }
+  document.addEventListener('DOMContentLoaded',setupCapitalControl);setupCapitalControl();
+})();
+// Flujo demostrativo de solicitudes de depósito y retiro.
+(function(){
+  const requests=[];
+  let nextRequest=103;
+  let demoBalance=8450;
+  const money=value=>'S/ '+value.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  function updateBalance(){const kpi=document.querySelector('#dashContent .kpi strong');if(kpi)kpi.textContent=money(demoBalance);}
+  function ensureWorkflow(){
+    const dashboard=document.getElementById('dashboard');
+    const quick=dashboard&&dashboard.querySelector('.quick-actions');
+    if(quick&&!document.getElementById('moneyRequestForm')){
+      const panel=document.createElement('div');panel.className='box';panel.id='moneyRequestForm';panel.style.marginBottom='16px';panel.hidden=true;
+      panel.innerHTML='<h3 id="moneyRequestTitle">Solicitar operación</h3><p class="muted" style="margin:5px 0 15px">Registra una solicitud de demostración. El saldo no cambia hasta que el administrador confirme la operación.</p><form id="moneyRequestFields"><label class="field"><span>Tipo de operación</span><select id="moneyRequestType" required><option value="deposit">Depósito</option><option value="withdrawal">Retiro</option></select></label><label class="field"><span>Importe (S/)</span><input id="moneyRequestAmount" type="number" min="1" max="1000000" step="0.01" required placeholder="Ej. 150.00"></label><label class="field"><span>Método</span><select id="moneyRequestMethod" required><option>Transferencia bancaria</option><option>Yape</option><option>Plin</option></select></label><label class="field" id="receiptField"><span>Número de operación o referencia del comprobante</span><input id="moneyRequestReference" maxlength="80" placeholder="Referencia de ejemplo"></label><label class="field" id="payoutField" hidden><span>Destino del retiro (sin ingresar números completos de tarjeta)</span><input id="moneyRequestDestination" maxlength="80" placeholder="Ej. Yape terminado en 1234"></label><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="primary" type="submit">Enviar solicitud</button><button class="secondary" id="cancelMoneyRequest" type="button">Cancelar</button></div></form><div class="notice">Esta demostración guarda los datos solo en la página abierta. No adjuntes comprobantes reales ni datos bancarios sensibles.</div>';
+      quick.insertAdjacentElement('afterend',panel);
+      const type=panel.querySelector('#moneyRequestType');
+      type.addEventListener('change',()=>{const withdrawal=type.value==='withdrawal';panel.querySelector('#receiptField').hidden=withdrawal;panel.querySelector('#payoutField').hidden=!withdrawal;});
+      panel.querySelector('#cancelMoneyRequest').addEventListener('click',()=>{panel.hidden=true;});
+      panel.querySelector('#moneyRequestFields').addEventListener('submit',event=>{
+        event.preventDefault();const operation=type.value;const amount=Number(panel.querySelector('#moneyRequestAmount').value);const method=panel.querySelector('#moneyRequestMethod').value;const reference=panel.querySelector('#moneyRequestReference').value.trim();const destination=panel.querySelector('#moneyRequestDestination').value.trim();
+        if(!Number.isFinite(amount)||amount<=0){toast('Ingresa un importe válido.');return;}if(operation==='deposit'&&!reference){toast('Añade una referencia de comprobante de ejemplo.');return;}if(operation==='withdrawal'&&!destination){toast('Indica un destino de retiro de ejemplo.');return;}if(operation==='withdrawal'&&amount>demoBalance){toast('El importe supera el saldo disponible en esta demo.');return;}
+        const item={id:'DEMO-'+nextRequest++,operation,amount,method,reference:operation==='deposit'?reference:destination,status:'Pendiente'};requests.push(item);renderRequests();panel.querySelector('#moneyRequestFields').reset();panel.hidden=true;toast('Solicitud '+item.id+' añadida a la cola administrativa de esta demo.');
+      });
+    }
+    const admin=document.getElementById('admin');
+    if(admin&&!document.getElementById('moneyRequestQueue')){
+      const queue=document.createElement('div');queue.className='box';queue.id='moneyRequestQueue';queue.style.marginBottom='16px';queue.innerHTML='<h3>Solicitudes nuevas de depósito y retiro</h3><p class="muted" style="margin:5px 0 15px">Confirma solo después de verificar la operación. Las acciones afectan únicamente los datos de esta demostración.</p><div class="table-wrap"><table><thead><tr><th>ID</th><th>Operación</th><th>Método</th><th>Importe</th><th>Referencia / destino</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="moneyRequestRows"><tr><td colspan="7">Aún no hay solicitudes nuevas en esta sesión.</td></tr></tbody></table></div><div class="notice">En un sistema real, los comprobantes y pagos deben verificarse de forma segura; la confirmación requiere autenticación, permisos y auditoría del administrador.</div>';
+      const calculator=document.getElementById('adminLoanCalculator');const heading=admin.querySelector('.section-head');if(calculator)calculator.insertAdjacentElement('afterend',queue);else if(heading)heading.insertAdjacentElement('afterend',queue);else admin.prepend(queue);
+    }
+  }
+  function renderRequests(){const body=document.getElementById('moneyRequestRows');if(!body)return;if(!requests.length){body.innerHTML='<tr><td colspan="7">Aún no hay solicitudes nuevas en esta sesión.</td></tr>';return;}body.replaceChildren();requests.forEach(item=>{const row=document.createElement('tr');[item.id,item.operation==='deposit'?'Depósito':'Retiro',item.method,money(item.amount),item.reference,item.status].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);});const action=document.createElement('td');if(item.status==='Pendiente'){const confirm=document.createElement('button');confirm.textContent=item.operation==='deposit'?'Confirmar recepción':'Confirmar pago';confirm.addEventListener('click',()=>{if(item.operation==='withdrawal'&&item.amount>demoBalance){toast('No se puede confirmar: saldo insuficiente en la demo.');return;}demoBalance+=item.operation==='deposit'?item.amount:-item.amount;item.status=item.operation==='deposit'?'Confirmado (demo)':'Pagado (demo)';updateBalance();renderRequests();toast('Estado actualizado en la demo. Saldo de ejemplo actualizado.');});const reject=document.createElement('button');reject.textContent='Rechazar';reject.addEventListener('click',()=>{item.status='Rechazado (demo)';renderRequests();toast('Solicitud rechazada solo en la demo.');});action.className='admin-actions';action.append(confirm,reject);}else action.textContent='Sin acciones';row.appendChild(action);body.appendChild(row);});}
+  function openRequest(type){ensureWorkflow();const panel=document.getElementById('moneyRequestForm');if(!panel)return;panel.hidden=false;panel.querySelector('#moneyRequestType').value=type;panel.querySelector('#moneyRequestType').dispatchEvent(new Event('change'));panel.scrollIntoView({behavior:'smooth',block:'center'});}
+  document.addEventListener('DOMContentLoaded',ensureWorkflow);ensureWorkflow();
+  const depositButton=document.querySelector('#dashboard .quick[onclick*="Solicitud de depósito"]');if(depositButton)depositButton.onclick=()=>openRequest('deposit');
+  const withdrawalButton=document.querySelector('#dashboard .quick[onclick*="Solicitud de retiro"]');if(withdrawalButton)withdrawalButton.onclick=()=>openRequest('withdrawal');
+})();
+(function(){
+  const staffMembers=[];let staffSequence=1;const money=value=>'S/ '+value.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  function setupStaffPayments(){const admin=document.getElementById('admin');if(!admin||document.getElementById('staffPayments'))return;const panel=document.createElement('div');panel.className='box';panel.id='staffPayments';panel.style.marginBottom='16px';panel.innerHTML='<h3>Pagos al personal</h3><p class="muted" style="margin:5px 0 15px">Control independiente de las obligaciones con cada colaborador. Registra el monto acordado, los pagos efectuados y el saldo pendiente. No modifica automáticamente el capital ni los fondos reservados para personal.</p><div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"><div class="kpi"><span>Total por pagar</span><strong id="staffTotalDue">S/ 0.00</strong><small>Obligaciones registradas</small></div><div class="kpi"><span>Total pagado</span><strong id="staffTotalPaid">S/ 0.00</strong><small>Pagos registrados</small></div><div class="kpi"><span>Saldo pendiente</span><strong id="staffTotalBalance">S/ 0.00</strong><small>Por pagar al personal</small></div></div><div class="content-grid" style="margin-top:16px"><div class="box"><h3>Registrar obligación</h3><form id="staffDueForm"><label class="field"><span>Nombre del colaborador</span><input id="staffName" maxlength="80" required placeholder="Nombre del colaborador"></label><label class="field"><span>Monto total acordado (S/)</span><input id="staffDueAmount" type="number" min="0.01" step="0.01" required placeholder="Ej. 350.00"></label><label class="field"><span>Concepto</span><input id="staffConcept" maxlength="100" placeholder="Ej. Comisión o pago mensual"></label><button class="primary" type="submit">Registrar obligación</button></form></div><div class="box"><h3>Registrar pago</h3><form id="staffPayForm"><label class="field"><span>Colaborador</span><select id="staffPayPerson" required><option value="">Selecciona un colaborador</option></select></label><label class="field"><span>Importe pagado (S/)</span><input id="staffPayAmount" type="number" min="0.01" step="0.01" required placeholder="Ej. 100.00"></label><label class="field"><span>Referencia (opcional)</span><input id="staffPayReference" maxlength="80" placeholder="Código o nota de pago"></label><button class="primary" type="submit">Registrar pago</button></form></div></div><div class="table-wrap" style="margin-top:18px"><table><thead><tr><th>Colaborador</th><th>Concepto</th><th>Total acordado</th><th>Pagado</th><th>Saldo pendiente</th><th>Estado</th><th>Última referencia</th></tr></thead><tbody id="staffPaymentRows"><tr><td colspan="7">Aún no hay obligaciones registradas.</td></tr></tbody></table></div><div class="notice">Control demostrativo: verifica cada pago antes de registrarlo. Este apartado es independiente del capital y de los intereses reservados para el personal; debes conciliar ambos registros manualmente. La información solo permanece mientras esta página esté abierta.</div>';const capital=document.getElementById('capitalControl');const queue=document.getElementById('moneyRequestQueue');const heading=admin.querySelector('.section-head');if(capital)capital.insertAdjacentElement('afterend',panel);else if(queue)queue.insertAdjacentElement('afterend',panel);else if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
+    function render(){const due=staffMembers.reduce((sum,item)=>sum+item.due,0),paid=staffMembers.reduce((sum,item)=>sum+item.paid,0);document.getElementById('staffTotalDue').textContent=money(due);document.getElementById('staffTotalPaid').textContent=money(paid);document.getElementById('staffTotalBalance').textContent=money(due-paid);const select=document.getElementById('staffPayPerson'),old=select.value;select.innerHTML='<option value="">Selecciona un colaborador</option>';staffMembers.filter(item=>item.due-item.paid>0).forEach(item=>{const option=document.createElement('option');option.value=item.id;option.textContent=item.name+' · pendiente '+money(item.due-item.paid);select.appendChild(option)});if([...select.options].some(option=>option.value===old))select.value=old;const body=document.getElementById('staffPaymentRows');body.replaceChildren();if(!staffMembers.length){body.innerHTML='<tr><td colspan="7">Aún no hay obligaciones registradas.</td></tr>';return}staffMembers.forEach(item=>{const balance=item.due-item.paid;const row=document.createElement('tr');[item.name,item.concept||'—',money(item.due),money(item.paid),money(balance),balance===0?'Pagado':'Pendiente',item.reference||'—'].forEach((value,index)=>{const cell=document.createElement('td');if(index===5){const badge=document.createElement('span');badge.className='status '+(balance===0?'good':'');badge.textContent=value;cell.appendChild(badge)}else cell.textContent=value;row.appendChild(cell)});body.appendChild(row)})}
+    document.getElementById('staffDueForm').addEventListener('submit',event=>{event.preventDefault();const name=document.getElementById('staffName').value.trim(),due=Number(document.getElementById('staffDueAmount').value),concept=document.getElementById('staffConcept').value.trim();if(!name||!Number.isFinite(due)||due<=0){toast('Ingresa un nombre y un monto válido.');return}staffMembers.push({id:'PERS-'+String(staffSequence++).padStart(3,'0'),name,due,paid:0,concept,reference:''});render();event.target.reset();toast('Obligación del personal registrada en la demo.')});
+    document.getElementById('staffPayForm').addEventListener('submit',event=>{event.preventDefault();const item=staffMembers.find(person=>person.id===document.getElementById('staffPayPerson').value),amount=Number(document.getElementById('staffPayAmount').value),reference=document.getElementById('staffPayReference').value.trim();if(!item||!Number.isFinite(amount)||amount<=0){toast('Selecciona un colaborador e ingresa un pago válido.');return}if(amount>item.due-item.paid){toast('El pago supera el saldo pendiente de este colaborador.');return}item.paid+=amount;item.reference=reference||'Pago registrado';render();event.target.reset();toast('Pago registrado en la demo; saldo pendiente actualizado.')});render();
+  }
+  document.addEventListener('DOMContentLoaded',setupStaffPayments);setupStaffPayments();
+})();
+function reviewRow(button,approved){const row=button.closest('tr');const state=row.querySelector('.status');state.textContent=approved?'Aprobada (demo)':'Rechazada (demo)';state.className='status '+(approved?'good':'bad');row.querySelector('.admin-actions').innerHTML='<span class="muted">Acción registrada localmente</span>';toast('Cambio de estado solo en la demo; no crea ni bloquea una cuenta real.');}
+function dashTab(button,tab){document.querySelectorAll('.side-link').forEach(b=>b.classList.remove('active'));button.classList.add('active');const titles={resumen:['Hola, Andrea 👋','Aquí tienes un resumen de tu actividad financiera.'],ahorro:['Mi ahorro','Consulta ilustrativa de tu ahorro y solicitudes.'],prestamos:['Mis préstamos','Simulaciones y estado de solicitudes de préstamo.'],inversiones:['Mis inversiones','Vista ilustrativa de productos y plazos.'],movimientos:['Mis movimientos','Registro de ejemplo de operaciones recientes.']};document.getElementById('dashTitle').textContent=titles[tab][0];document.getElementById('dashSubtitle').textContent=titles[tab][1];if(tab!=='resumen'){toast(titles[tab][0]+': sección de demostración. Los datos son ficticios.');}}
+</script>
+<script>
+// Panel de preparación para operar con dinero real: informa requisitos sin simular conexiones inexistentes.
+document.addEventListener('DOMContentLoaded',function(){
+  const admin=document.getElementById('admin');
+  if(!admin||document.getElementById('productionReadiness'))return;
+  const panel=document.createElement('section');
+  panel.className='box';panel.id='productionReadiness';panel.style.marginBottom='16px';
+  panel.innerHTML='<h3>Preparación para operaciones reales</h3><p class="muted" style="margin:5px 0 15px">La web está organizada para el flujo operativo de GRUPO J&L CAPITAL. Antes de aceptar o mover dinero, completa y verifica estos componentes de producción.</p><div class="feature-grid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))"><article class="feature"><h3>1. Servidor y base de datos</h3><p>Guardar clientes, saldos, préstamos y movimientos de forma permanente, con copias de seguridad.</p><span class="status">Pendiente de conexión</span></article><article class="feature"><h3>2. Acceso y permisos</h3><p>Autenticación segura, acceso privado del administrador y permisos por tipo de usuario.</p><span class="status">Pendiente de conexión</span></article><article class="feature"><h3>3. Pagos y conciliación</h3><p>Integrar un proveedor autorizado o un proceso bancario verificable; no acreditar fondos solo por un comprobante.</p><span class="status">Pendiente de integración</span></article><article class="feature"><h3>4. Cumplimiento y auditoría</h3><p>Revisar obligaciones legales aplicables en Perú, registrar responsables y conservar evidencia de cada operación.</p><span class="status">Pendiente de validación</span></article></div><div class="disclaimer"><strong>Estado actual:</strong> este prototipo todavía no se conecta a bancos, Yape, Plin, un servidor ni una base de datos. No ingreses dinero ni datos bancarios reales hasta completar las integraciones, las pruebas de seguridad y la revisión legal.</div>';
+  const nextStep=document.createElement('div');
+  nextStep.className='notice';
+  nextStep.innerHTML='<strong>Alcance elegido: plataforma integral (opción C).</strong> El sistema contemplará depósitos y retiros de clientes, consulta de saldos y movimientos, préstamos, cuotas, intereses, control del capital y pagos al personal. <strong>Orden de implementación:</strong> 1) definir reglas y permisos; 2) conectar un servidor y una base de datos seguros; 3) habilitar inicio de sesión real para clientes y administradores; 4) integrar pagos verificables y conciliación; 5) probar seguridad, registros de auditoría y cumplimiento legal en Perú. Estas funciones siguen siendo una planificación: la demo aún no mueve dinero real.';
+  nextStep.innerHTML+='<br><br><strong>Recomendación técnica inicial:</strong> Supabase (PostgreSQL y autenticación) como base de datos administrada y Vercel para publicar la web. Antes de producción se deberán configurar permisos por fila, lógica segura del servidor, copias de seguridad, auditoría y revisión legal. Ningún servicio está conectado todavía.';
+  panel.appendChild(nextStep);
+  const heading=admin.querySelector('.section-head');
+  if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
+});
+</script>
+<script>
+// Flujo de cuentas administradas por J&L. Esta versión sigue siendo una demo local.
+document.addEventListener('DOMContentLoaded',function(){
+  const topActions=document.querySelector('.top-actions');
+  if(topActions){topActions.innerHTML='<button class="ghost" onclick="showView(\'login\')">Acceso clientes</button><button class="primary" onclick="showView(\'admin\')">Acceso administrador</button>';}
+  document.querySelectorAll('#home [onclick*="signup"]').forEach(button=>{button.onclick=()=>showView('login');button.textContent='Acceso de clientes →';});
+  const signup=document.getElementById('signup');if(signup)signup.style.display='none';
+  const login=document.querySelector('#login .panel');
+  if(login){
+    login.querySelector('.eyebrow').innerHTML='<span class="dot"></span> Acceso privado de clientes';
+    login.querySelector('h2').textContent='Ingresa a tu cuenta';
+    login.querySelector('.sub').textContent='Usa el DNI y la contraseña que te entregó el administrador de GRUPO J&L CAPITAL.';
+    const form=login.querySelector('form');
+    form.innerHTML='<label class="field"><span>DNI (usuario)</span><input id="clientDniLogin" inputmode="numeric" autocomplete="username" maxlength="8" pattern="[0-9]{8}" required placeholder="Ingresa tu DNI de 8 dígitos"></label><label class="field"><span>Contraseña</span><input id="clientPasswordLogin" type="password" autocomplete="current-password" required minlength="4" placeholder="Contraseña asignada"></label><button class="primary full" type="submit">Ingresar →</button>';
+    form.onsubmit=function(event){event.preventDefault();const dni=document.getElementById('clientDniLogin').value.trim();const password=document.getElementById('clientPasswordLogin').value;const client=window.jlcDemoClients.find(item=>item.dni===dni&&item.demoPassword===password&&item.active);if(!client){toast('No se encontró una cuenta demo activa con esos datos. Pide al administrador que revise el acceso.');return;}window.jlcCurrentDemoClient=client;document.getElementById('dashTitle').textContent='Hola, '+client.name.split(' ')[0]+' 👋';document.getElementById('dashSubtitle').textContent='Resumen de demostración para el DNI terminado en '+dni.slice(-4)+'.';showView('dashboard');toast('Acceso de demostración. Los datos aún no vienen de Google Sheets.');};
+    const note=login.querySelector('.small-note');if(note)note.remove();
+    const oldNotice=login.querySelector('.notice');if(oldNotice)oldNotice.textContent='Esta pantalla todavía no valida cuentas reales. La conexión segura a Google Sheets se hará mediante Google Apps Script; las contraseñas no deben guardarse en texto legible en la hoja.';
+  }
+  const admin=document.getElementById('admin');
+  if(admin&&!document.getElementById('clientAccountManager')){
+    const panel=document.createElement('div');panel.className='box';panel.id='clientAccountManager';panel.style.marginBottom='16px';
+    panel.innerHTML='<h3>Crear cuenta de cliente</h3><p class="muted" style="margin:5px 0 15px">Solo el administrador registra clientes y les asigna acceso. El cliente ingresa con su DNI; no hay registro público ni solicitudes de préstamo.</p><form id="createClientDemoForm" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px"><label class="field"><span>DNI (8 dígitos)</span><input id="newClientDni" inputmode="numeric" maxlength="8" pattern="[0-9]{8}" required placeholder="12345678"></label><label class="field"><span>Nombres y apellidos</span><input id="newClientName" maxlength="100" required placeholder="Nombre del cliente"></label><label class="field"><span>Contraseña inicial demo</span><input id="newClientPassword" type="password" minlength="4" required placeholder="Asigna una clave inicial"></label><label class="field"><span>Capital / préstamo inicial (S/)</span><input id="newClientLoan" type="number" min="0" step="0.01" value="0" required></label><div style="align-self:end"><button class="primary" type="submit">Crear cuenta demo</button></div></form><div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>DNI</th><th>Cliente</th><th>Préstamo asignado</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="clientAccountRows"><tr><td colspan="5">Aún no hay cuentas creadas en esta sesión.</td></tr></tbody></table></div><div class="notice"><strong>Importante:</strong> las cuentas de esta pantalla solo viven en la sesión de demostración y no se guardan en Google Sheets. No uses contraseñas reales aquí. Para operar, falta configurar Apps Script, permisos de administrador, verificación de contraseñas protegidas y reglas de acceso para que cada cliente vea únicamente sus propios datos.</div>';
+    const heading=admin.querySelector('.section-head');if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
+    const rows=document.getElementById('clientAccountRows');
+    window.jlcDemoClients=[];
+    function renderClients(){rows.replaceChildren();if(!window.jlcDemoClients.length){rows.innerHTML='<tr><td colspan="5">Aún no hay cuentas creadas en esta sesión.</td></tr>';return;}window.jlcDemoClients.forEach(client=>{const tr=document.createElement('tr');[client.dni,client.name,'S/ '+client.loan.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2}),client.active?'Activa (demo)':'Desactivada'].forEach(value=>{const td=document.createElement('td');td.textContent=value;tr.appendChild(td);});const td=document.createElement('td');const btn=document.createElement('button');btn.className='secondary';btn.textContent=client.active?'Desactivar':'Activar';btn.onclick=()=>{client.active=!client.active;renderClients();};td.appendChild(btn);tr.appendChild(td);rows.appendChild(tr);});}
+    document.getElementById('createClientDemoForm').addEventListener('submit',function(event){event.preventDefault();const dni=document.getElementById('newClientDni').value.trim();const name=document.getElementById('newClientName').value.trim();const password=document.getElementById('newClientPassword').value;const loan=Number(document.getElementById('newClientLoan').value);if(!/^\d{8}$/.test(dni)||!name||password.length<4||!Number.isFinite(loan)||loan<0){toast('Revisa el DNI, nombre, contraseña demo e importe.');return;}if(window.jlcDemoClients.some(client=>client.dni===dni)){toast('Ya existe una cuenta demo con ese DNI.');return;}window.jlcDemoClients.push({dni,name,demoPassword:password,loan,active:true});renderClients();this.reset();document.getElementById('newClientLoan').value='0';toast('Cuenta creada solo en esta demo. Entrega el acceso al cliente por un canal privado.');});
+  }
+  const readiness=document.getElementById('productionReadiness');
+  if(readiness){const title=readiness.querySelector('h3');if(title)title.textContent='Conexión pendiente con Google Sheets';const copy=readiness.querySelector('p');if(copy)copy.textContent='Google Sheets será el registro central de clientes, préstamos, cuotas, pagos, capital, intereses y pagos al personal. Para habilitarlo falta configurar y desplegar un Google Apps Script con validación segura y permisos.';const cards=readiness.querySelectorAll('.feature');if(cards.length){cards[0].querySelector('h3').textContent='1. Google Sheets';cards[0].querySelector('p').textContent='Hojas separadas para clientes, préstamos, cuotas, pagos, capital, intereses y personal, con acceso restringido.';cards[1].querySelector('h3').textContent='2. Acceso seguro';cards[1].querySelector('p').textContent='DNI como usuario, contraseña verificada en el servidor y datos filtrados por la cuenta autenticada.';cards[2].querySelector('h3').textContent='3. Apps Script';cards[2].querySelector('p').textContent='Servicio intermedio para leer y guardar registros en Sheets sin exponer credenciales ni permisos de edición al navegador.';cards[3].querySelector('h3').textContent='4. Pruebas y privacidad';cards[3].querySelector('p').textContent='Validar permisos, registros de auditoría, copias de seguridad y tratamiento de datos personales en Perú.';}const notices=readiness.querySelectorAll('.disclaimer');if(notices.length)notices[0].innerHTML='<strong>Estado actual:</strong> esta versión organiza el flujo visual, pero aún no está conectada a Google Sheets ni ofrece autenticación real. No ingreses datos reales ni uses esta demo para administrar dinero.';const next=readiness.querySelector('.notice');if(next)next.innerHTML='<strong>Flujo definido:</strong> tú creas las cuentas, asignas DNI y contraseña inicial, registras los préstamos y controlas cuotas y pagos. Los clientes solo consultan su propia información; no se registran ni solicitan préstamos desde la web. La contraseña debe validarse de forma segura y nunca almacenarse en texto legible.';}
+});
+</script>
+</body>
+</html>
