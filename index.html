@@ -506,28 +506,7 @@ try {
       );
       return;
     }
-
-  
-    const textoRespuesta = await response.text();
-    console.log('Respuesta de Apps Script:', textoRespuesta);
-
-    let resultado;
-
-    try {
-      resultado = JSON.parse(textoRespuesta);
-    } catch (errorJSON) {
-      throw new Error('Apps Script no devolvió una respuesta JSON válida.');
-    }
-
-    if (!resultado || resultado.ok !== true) {
-      toast(
-        resultado && resultado.mensaje
-          ? resultado.mensaje
-          : 'El servidor no confirmó el registro.'
-      );
-      return;
-    }
-
+    
     const loan = {
       id: resultado.prestamo_id,
       client: resultado.cliente || client,
