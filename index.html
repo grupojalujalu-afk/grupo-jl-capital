@@ -248,71 +248,156 @@ document.getElementById('signupForm').addEventListener('submit',function(e){e.pr
     const admin=document.getElementById('admin');
     if(!admin||document.getElementById('capitalControl'))return;
     const panel=document.createElement('div');panel.className='box';panel.id='capitalControl';panel.style.marginBottom='16px';
-    panel.innerHTML='<h3>Control de capital y préstamos</h3><p class="muted" style="margin:5px 0 15px">Registra el capital disponible, el dinero prestado y cómo se distribuyen los intereses cobrados. Datos locales de demostración.</p><div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"><div class="kpi"><span>Capital disponible</span><strong id="capitalAvailable">S/ 3,000.00</strong><small>Disponible para nuevos préstamos</small></div><div class="kpi"><span>Capital colocado en préstamos</span><strong id="capitalLent">S/ 0.00</strong><small>Principal pendiente de recuperar</small></div><div class="kpi"><span>Intereses cobrados</span><strong id="capitalInterest">S/ 0.00</strong><small>Interés recibido acumulado</small></div><div class="kpi"><span>Asignado a personal</span><strong id="capitalStaff">S/ 0.00</strong><small>Parte de intereses destinada a pagos</small></div><div class="kpi"><span>Intereses reinvertidos</span><strong id="capitalGrowth">S/ 0.00</strong><small>Parte sumada al capital disponible</small></div></div><div class="content-grid" style="margin-top:16px"><div class="box"><h3>Registrar nuevo préstamo</h3><p class="muted" style="margin:5px 0 12px">El importe se descuenta del capital disponible.</p><<form id="newCapitalLoan">
+   panel.innerHTML = `
+  <h3>Control de capital y préstamos</h3>
+  <p class="muted" style="margin:5px 0 15px">
+    Registra el capital disponible, el dinero prestado y cómo se distribuyen los intereses cobrados.
+  </p>
 
-  <label class="field">
-    <span>DNI del cliente (8 dígitos)</span>
-    <input id="capitalLoanDni"
-           inputmode="numeric"
-           maxlength="8"
-           pattern="[0-9]{8}"
-           required
-           placeholder="Ej. 12345678">
-  </label>
+  <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+    <div class="kpi">
+      <span>Capital disponible</span>
+      <strong id="capitalAvailable">S/ 3,000.00</strong>
+      <small>Disponible para nuevos préstamos</small>
+    </div>
+    <div class="kpi">
+      <span>Capital colocado en préstamos</span>
+      <strong id="capitalLent">S/ 0.00</strong>
+      <small>Principal pendiente de recuperar</small>
+    </div>
+    <div class="kpi">
+      <span>Intereses cobrados</span>
+      <strong id="capitalInterest">S/ 0.00</strong>
+      <small>Interés recibido acumulado</small>
+    </div>
+    <div class="kpi">
+      <span>Asignado a personal</span>
+      <strong id="capitalStaff">S/ 0.00</strong>
+      <small>Parte de intereses destinada a pagos</small>
+    </div>
+    <div class="kpi">
+      <span>Intereses reinvertidos</span>
+      <strong id="capitalGrowth">S/ 0.00</strong>
+      <small>Parte sumada al capital disponible</small>
+    </div>
+  </div>
 
-  <label class="field">
-    <span>Cliente (nombre de referencia)</span>
-    <input id="capitalLoanClient"
-           maxlength="80"
-           required
-           placeholder="Nombre del cliente">
-  </label>
+  <div class="content-grid" style="margin-top:16px">
+    <div class="box">
+      <h3>Registrar nuevo préstamo</h3>
+      <p class="muted" style="margin:5px 0 12px">
+        El importe se descuenta del capital disponible.
+      </p>
 
-  <label class="field">
-    <span>Importe del préstamo (S/)</span>
-    <input id="capitalLoanAmount"
-           type="number"
-           min="0.01"
-           step="0.01"
-           required
-           placeholder="Ej. 500.00">
-  </label>
+      <form id="newCapitalLoan">
+        <label class="field">
+          <span>DNI del cliente (8 dígitos)</span>
+          <input id="capitalLoanDni" inputmode="numeric"
+                 maxlength="8" pattern="[0-9]{8}" required
+                 placeholder="Ej. 12345678">
+        </label>
 
-  <label class="field">
-    <span>Tasa total de interés (%)</span>
-    <input id="capitalLoanRate"
-           type="number"
-           min="0"
-           max="100"
-           step="0.01"
-           value="0"
-           required>
-  </label>
+        <label class="field">
+          <span>Cliente (nombre de referencia)</span>
+          <input id="capitalLoanClient" maxlength="80" required
+                 placeholder="Nombre del cliente">
+        </label>
 
-  <label class="field">
-    <span>Número de cuotas mensuales</span>
-    <input id="capitalLoanInstallments"
-           type="number"
-           min="1"
-           max="120"
-           step="1"
-           value="2"
-           required>
-  </label>
+        <label class="field">
+          <span>Importe del préstamo (S/)</span>
+          <input id="capitalLoanAmount" type="number"
+                 min="0.01" step="0.01" required
+                 placeholder="Ej. 500.00">
+        </label>
 
-  <label class="field">
-    <span>Fecha de inicio</span>
-    <input id="capitalLoanStartDate"
-           type="date"
-           required>
-  </label>
+        <label class="field">
+          <span>Tasa total de interés (%)</span>
+          <input id="capitalLoanRate" type="number"
+                 min="0" max="100" step="0.01"
+                 value="0" required>
+        </label>
 
-  <button class="primary" type="submit">
-    Registrar préstamo en Google Sheets
-  </button>
+        <label class="field">
+          <span>Número de cuotas mensuales</span>
+          <input id="capitalLoanInstallments" type="number"
+                 min="1" max="120" step="1"
+                 value="2" required>
+        </label>
 
-</form><div class="box"><h3>Registrar pago recibido</h3><p class="muted" style="margin:5px 0 12px">El principal recuperado vuelve al capital. Los intereses se reparten entre personal y reinversión.</p><form id="capitalLoanPayment"><label class="field"><span>Préstamo</span><select id="capitalPaymentLoan" required><option value="">Selecciona un préstamo</option></select></label><label class="field"><span>Principal devuelto (S/)</span><input id="capitalPrincipalPaid" type="number" min="0" step="0.01" value="0" required></label><label class="field"><span>Interés cobrado (S/)</span><input id="capitalInterestPaid" type="number" min="0" step="0.01" value="0" required></label><label class="field"><span>Porcentaje de intereses para personal (%)</span><input id="capitalStaffPercent" type="number" min="0" max="100" step="1" value="50" required></label><button class="primary" type="submit">Registrar pago</button></form></div></div><div class="table-wrap" style="margin-top:18px"><table><thead><tr><th>ID</th><th>Cliente</th><th>Importe inicial</th><th>Principal pendiente</th><th>Interés cobrado</th><th>Estado</th></tr></thead><tbody id="capitalLoanRows"><tr><td colspan="6">Aún no se registraron préstamos en esta sesión.</td></tr></tbody></table></div><div class="notice">Regla de control: préstamo nuevo = baja el capital disponible; devolución del principal = vuelve al capital; interés cobrado = se divide entre personal y capital según el porcentaje configurado. Esta demo no guarda datos al cerrar o recargar la página y no registra dinero real.</div>';
-    const metrics=panel.querySelector('.kpis');const totalCard=document.createElement('div');totalCard.className='kpi';totalCard.innerHTML='<span>Capital total gestionado</span><strong id="capitalTotal">S/ 3,000.00</strong><small>Disponible + principal pendiente</small>';metrics.insertAdjacentElement('afterbegin',totalCard);
+        <label class="field">
+          <span>Fecha de inicio</span>
+          <input id="capitalLoanStartDate" type="date" required>
+        </label>
+
+        <button class="primary" type="submit">
+          Registrar préstamo en Google Sheets
+        </button>
+      </form>
+    </div>
+
+    <div class="box">
+      <h3>Registrar pago recibido</h3>
+      <p class="muted" style="margin:5px 0 12px">
+        El principal recuperado vuelve al capital. Los intereses se reparten entre personal y reinversión.
+      </p>
+
+      <form id="capitalLoanPayment">
+        <label class="field">
+          <span>Préstamo</span>
+          <select id="capitalPaymentLoan" required>
+            <option value="">Selecciona un préstamo</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Principal devuelto (S/)</span>
+          <input id="capitalPrincipalPaid" type="number"
+                 min="0" step="0.01" value="0" required>
+        </label>
+
+        <label class="field">
+          <span>Interés cobrado (S/)</span>
+          <input id="capitalInterestPaid" type="number"
+                 min="0" step="0.01" value="0" required>
+        </label>
+
+        <label class="field">
+          <span>Porcentaje de intereses para personal (%)</span>
+          <input id="capitalStaffPercent" type="number"
+                 min="0" max="100" step="1" value="50" required>
+        </label>
+
+        <button class="primary" type="submit">
+          Registrar pago
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="margin-top:18px">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Importe inicial</th>
+          <th>Principal pendiente</th>
+          <th>Interés cobrado</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="capitalLoanRows">
+        <tr>
+          <td colspan="6">Aún no se registraron préstamos.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="notice">
+    Los registros de este panel son demostrativos. El préstamo se enviará a Google Sheets únicamente si el servidor confirma el registro.
+  </div>
+`;
     const heading=admin.querySelector('.section-head');if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
     function update(){
       document.getElementById('capitalAvailable').textContent=money(availableCapital);
