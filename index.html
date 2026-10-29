@@ -500,8 +500,27 @@ document.getElementById('newCapitalLoan').addEventListener('submit', async event
       return;
     }
 
-    // Actualiza la vista local solamente después de confirmar
-    // que Apps Script informó que el registro fue guardado.
+  
+    const textoRespuesta = await response.text();
+    console.log('Respuesta de Apps Script:', textoRespuesta);
+
+    let resultado;
+
+    try {
+      resultado = JSON.parse(textoRespuesta);
+    } catch (errorJSON) {
+      throw new Error('Apps Script no devolvió una respuesta JSON válida.');
+    }
+
+    if (!resultado || resultado.ok !== true) {
+      toast(
+        resultado && resultado.mensaje
+          ? resultado.mensaje
+          : 'El servidor no confirmó el registro.'
+      );
+      return;
+    }
+
     const loan = {
       id: resultado.prestamo_id,
       client: resultado.cliente || client,
@@ -516,27 +535,31 @@ document.getElementById('newCapitalLoan').addEventListener('submit', async event
     principalOutstanding += amount;
 
     update();
-    event.currentTarget.reset();
+
+    const form = event.currentTarget;
+    form.reset();
 
     toast(
-      'Préstamo guardado en Google Sheets. ID: ' +
+      '¡Préstamo guardado correctamente! ID: ' +
       resultado.prestamo_id +
-      '. Cuotas generadas: ' + resultado.numero_cuotas
+      '. Cuotas generadas: ' +
+      resultado.numero_cuotas
     );
 
- } catch (error) {
-  console.error('Error al registrar préstamo:', error);
+  } catch (error) {
+    console.error('Error al registrar préstamo:', error);
 
-  toast(
-    'ATENCIÓN: el servidor pudo guardar el préstamo, ' +
-    'pero la página no pudo confirmar la respuesta. ' +
-    'No vuelvas a registrarlo.'
-  );
-} finally {
-  button.disabled = false;
-  button.textContent = originalText;
-}
+    toast(
+      'El préstamo pudo guardarse, pero ocurrió un error al confirmar. ' +
+      'No lo registres nuevamente. Consulta la consola.'
+    );
+
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
 });
+
     document.getElementById('capitalLoanPayment').addEventListener('submit',event=>{event.preventDefault();const id=document.getElementById('capitalPaymentLoan').value;const loan=loans.find(item=>item.id===id);const principal=Number(document.getElementById('capitalPrincipalPaid').value);const interest=Number(document.getElementById('capitalInterestPaid').value);const percent=Number(document.getElementById('capitalStaffPercent').value);if(!loan){toast('Selecciona un préstamo válido.');return;}if(!Number.isFinite(principal)||principal<0||principal>loan.outstanding||!Number.isFinite(interest)||interest<0||!Number.isFinite(percent)||percent<0||percent>100||principal+interest<=0){toast('Revisa los importes y el porcentaje del personal.');return;}const staff=interest*percent/100;const reinvested=interest-staff;loan.outstanding-=principal;loan.interest+=interest;principalOutstanding-=principal;availableCapital+=principal+reinvested;interestReceived+=interest;staffAllocation+=staff;capitalGrowth+=reinvested;update();document.getElementById('capitalPrincipalPaid').value='0';document.getElementById('capitalInterestPaid').value='0';toast('Pago registrado. Personal: '+money(staff)+' · Interés reinvertido: '+money(reinvested)+'.');});
     update();
   }
