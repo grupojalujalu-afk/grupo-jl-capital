@@ -524,15 +524,18 @@ document.getElementById('newCapitalLoan').addEventListener('submit', async event
       '. Cuotas generadas: ' + resultado.numero_cuotas
     );
 
-  } catch (error) {
-    console.error('Error al registrar préstamo:', error);
-    toast(
-      'No se pudo confirmar el registro. Revisa Apps Script y su implementación.'
-    );
-  } finally {
-    button.disabled = false;
-    button.textContent = originalText;
-  }
+ } catch (error) {
+  console.error('Error al registrar préstamo:', error);
+
+  toast(
+    'ATENCIÓN: el servidor pudo guardar el préstamo, ' +
+    'pero la página no pudo confirmar la respuesta. ' +
+    'No vuelvas a registrarlo.'
+  );
+} finally {
+  button.disabled = false;
+  button.textContent = originalText;
+}
 });
     document.getElementById('capitalLoanPayment').addEventListener('submit',event=>{event.preventDefault();const id=document.getElementById('capitalPaymentLoan').value;const loan=loans.find(item=>item.id===id);const principal=Number(document.getElementById('capitalPrincipalPaid').value);const interest=Number(document.getElementById('capitalInterestPaid').value);const percent=Number(document.getElementById('capitalStaffPercent').value);if(!loan){toast('Selecciona un préstamo válido.');return;}if(!Number.isFinite(principal)||principal<0||principal>loan.outstanding||!Number.isFinite(interest)||interest<0||!Number.isFinite(percent)||percent<0||percent>100||principal+interest<=0){toast('Revisa los importes y el porcentaje del personal.');return;}const staff=interest*percent/100;const reinvested=interest-staff;loan.outstanding-=principal;loan.interest+=interest;principalOutstanding-=principal;availableCapital+=principal+reinvested;interestReceived+=interest;staffAllocation+=staff;capitalGrowth+=reinvested;update();document.getElementById('capitalPrincipalPaid').value='0';document.getElementById('capitalInterestPaid').value='0';toast('Pago registrado. Personal: '+money(staff)+' · Interés reinvertido: '+money(reinvested)+'.');});
     update();
