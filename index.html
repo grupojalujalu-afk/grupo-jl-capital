@@ -326,7 +326,129 @@ document.getElementById('signupForm').addEventListener('submit',function(e){e.pr
       const body=document.getElementById('capitalLoanRows');body.replaceChildren();if(!loans.length){body.innerHTML='<tr><td colspan="6">Aún no se registraron préstamos en esta sesión.</td></tr>';return;}
       loans.forEach(loan=>{const row=document.createElement('tr');[loan.id,loan.client,money(loan.amount),money(loan.outstanding),money(loan.interest),loan.outstanding===0?'Cancelado (demo)':'Activo (demo)'].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);});body.appendChild(row);});
     }
-    document.getElementById('newCapitalLoan').addEventListener('submit',event=>{event.preventDefault();const client=document.getElementById('capitalLoanClient').value.trim();const amount=Number(document.getElementById('capitalLoanAmount').value);if(!client||!Number.isFinite(amount)||amount<=0){toast('Ingresa un cliente y un importe válido.');return;}if(amount>availableCapital){toast('Capital insuficiente. Disponible: '+money(availableCapital));return;}const loan={id:'PREST-'+String(loanSequence++).padStart(3,'0'),client,amount,outstanding:amount,interest:0};loans.push(loan);availableCapital-=amount;principalOutstanding+=amount;update();event.target.reset();toast('Préstamo registrado en la demo; el capital disponible disminuyó.');});
+    
+document.getElementById('newCapitalLoan').addEventListener('submit', async event => {
+  event.preventDefault();
+
+  const dni = document.getElementById('capitalLoanDni').value.trim();
+  const client = document.getElementById('capitalLoanClient').value.trim();
+  const amount = Number(document.getElementById('capitalLoanAmount').value);
+  const rate = Number(document.getElementById('capitalLoanRate').value);
+  const installments = Number(document.getElementById('capitalLoanInstallments').value);
+  const startDate = document.getElementById('capitalLoanStartDate').value;
+
+  if (!/^\d{8}$/.test(dni)) {
+    toast('El DNI debe tener 8 dígitos.');
+    return;
+  }
+
+  if (!client || !Number.isFinite(amount) || amount <= 0) {
+    toast('Ingresa el nombre y un importe válido.');
+    return;
+  }
+
+  if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
+    toast('La tasa total debe estar entre 0% y 100%.');
+    return;
+  }
+
+  if (!Number.isInteger(installments) || installments < 1 || installments > 120) {
+    toast('El número de cuotas debe estar entre 1 y 120.');
+    return;
+  }
+
+  if (!startDate) {
+    toast('Selecciona la fecha de inicio.');
+    return;
+  }
+
+  if (amount > availableCapital) {
+    toast('Capital insuficiente. Disponible: ' + money(availableCapital));
+    return;
+  }
+
+  const adminKey = prompt(
+    'Introduce la clave administrativa configurada en las propiedades de Apps Script:'
+  );
+
+  if (!adminKey) {
+    toast('Registro cancelado.');
+    return;
+  }
+
+  const button = event.currentTarget.querySelector('button[type="submit"]');
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Guardando en Google Sheets…';
+
+  try {
+    const response = await fetch(JLC_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        accion: 'registrarPrestamo',
+        adminKey: adminKey,
+        prestamo: {
+          dni: dni,
+          capital: amount,
+          tasa: rate,
+          numeroCuotas: installments,
+          fechaInicio: startDate
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Respuesta HTTP ' + response.status);
+    }
+
+    const resultado = await response.json();
+
+    if (!resultado || resultado.ok !== true) {
+      toast(
+        resultado && resultado.mensaje
+          ? resultado.mensaje
+          : 'No se pudo registrar el préstamo.'
+      );
+      return;
+    }
+
+    // Actualiza la vista local solamente después de confirmar
+    // que Apps Script informó que el registro fue guardado.
+    const loan = {
+      id: resultado.prestamo_id,
+      client: resultado.cliente || client,
+      amount: amount,
+      outstanding: amount,
+      interest: 0
+    };
+
+    loans.push(loan);
+    loanSequence++;
+    availableCapital -= amount;
+    principalOutstanding += amount;
+
+    update();
+    event.currentTarget.reset();
+
+    toast(
+      'Préstamo guardado en Google Sheets. ID: ' +
+      resultado.prestamo_id +
+      '. Cuotas generadas: ' + resultado.numero_cuotas
+    );
+
+  } catch (error) {
+    console.error('Error al registrar préstamo:', error);
+    toast(
+      'No se pudo confirmar el registro. Revisa Apps Script y su implementación.'
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+});
     document.getElementById('capitalLoanPayment').addEventListener('submit',event=>{event.preventDefault();const id=document.getElementById('capitalPaymentLoan').value;const loan=loans.find(item=>item.id===id);const principal=Number(document.getElementById('capitalPrincipalPaid').value);const interest=Number(document.getElementById('capitalInterestPaid').value);const percent=Number(document.getElementById('capitalStaffPercent').value);if(!loan){toast('Selecciona un préstamo válido.');return;}if(!Number.isFinite(principal)||principal<0||principal>loan.outstanding||!Number.isFinite(interest)||interest<0||!Number.isFinite(percent)||percent<0||percent>100||principal+interest<=0){toast('Revisa los importes y el porcentaje del personal.');return;}const staff=interest*percent/100;const reinvested=interest-staff;loan.outstanding-=principal;loan.interest+=interest;principalOutstanding-=principal;availableCapital+=principal+reinvested;interestReceived+=interest;staffAllocation+=staff;capitalGrowth+=reinvested;update();document.getElementById('capitalPrincipalPaid').value='0';document.getElementById('capitalInterestPaid').value='0';toast('Pago registrado. Personal: '+money(staff)+' · Interés reinvertido: '+money(reinvested)+'.');});
     update();
   }
