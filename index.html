@@ -489,8 +489,6 @@ document.getElementById('newCapitalLoan').addEventListener('submit', async event
       throw new Error('Respuesta HTTP ' + response.status);
     }
 
-    const resultado = await response.json();
-
     if (!resultado || resultado.ok !== true) {
       toast(
         resultado && resultado.mensaje
