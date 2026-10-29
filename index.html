@@ -488,7 +488,16 @@ document.getElementById('newCapitalLoan').addEventListener('submit', async event
     if (!response.ok) {
       throw new Error('Respuesta HTTP ' + response.status);
     }
+const textoRespuesta = await response.text();
+console.log('Respuesta de Apps Script:', textoRespuesta);
 
+let resultado;
+
+try {
+  resultado = JSON.parse(textoRespuesta);
+} catch (errorJSON) {
+  throw new Error('Apps Script no devolvió una respuesta JSON válida.');
+}
     if (!resultado || resultado.ok !== true) {
       toast(
         resultado && resultado.mensaje
