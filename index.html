@@ -243,6 +243,58 @@ document.getElementById('signupForm').addEventListener('submit',function(e){e.pr
   let capitalGrowth=0;
   let loanSequence=1;
   const loans=[];
+  async function cargarPrestamosGuardados() {
+  const adminKey = prompt('Ingresa la clave administrativa para cargar los préstamos:');
+
+  if (!adminKey) {
+    alert('No se ingresó la clave administrativa.');
+    return;
+  }
+
+  try {
+    const response = await fetch(JLC_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        accion: 'listarPrestamosCapital',
+        adminKey: adminKey
+      })
+    });
+
+    const texto = await response.text();
+    let resultado;
+
+    try {
+      resultado = JSON.parse(texto);
+    } catch (error) {
+      throw new Error('El servidor no devolvió una respuesta válida.');
+    }
+
+    if (!response.ok || !resultado || resultado.ok !== true) {
+      throw new Error(resultado?.mensaje || 'No se pudieron cargar los préstamos.');
+    }
+
+    loans.length = 0;
+
+    resultado.prestamos.forEach(prestamo => {
+      loans.push({
+        id: prestamo.id,
+        amount: Number(prestamo.amount) || 0,
+        outstanding: Number(prestamo.outstanding) || 0,
+        client: prestamo.id,
+        interest: 0
+      });
+    });
+
+    update();
+
+    alert('Se cargaron ' + loans.length + ' préstamos guardados.');
+  } catch (error) {
+    alert(error.message || 'Error al cargar los préstamos.');
+  }
+}
   const money=value=>'S/ '+value.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
   function setupCapitalControl(){
     const admin=document.getElementById('admin');
