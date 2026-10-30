@@ -278,17 +278,33 @@ document.getElementById('signupForm').addEventListener('submit',function(e){e.pr
 
     loans.length = 0;
 
-    resultado.prestamos.forEach(prestamo => {
-      loans.push({
-        id: prestamo.id,
-        amount: Number(prestamo.amount) || 0,
-        outstanding: Number(prestamo.outstanding) || 0,
-        client: prestamo.id,
-        interest: 0
-      });
-    });
+resultado.prestamos.forEach(prestamo => {
+  loans.push({
+    id: prestamo.id,
+    amount: Number(prestamo.amount) || 0,
+    outstanding: Number(prestamo.outstanding) || 0,
+    client: prestamo.id,
+    interest: 0
+  });
+});
 
-    update();
+const capitalDevuelto = Number(resultado.capitalDevueltoTotal) || 0;
+interestReceived = Number(resultado.interesRecibidoTotal) || 0;
+staffAllocation = Number(resultado.personalAsignadoTotal) || 0;
+capitalGrowth = interestReceived - staffAllocation;
+
+principalOutstanding = loans.reduce(
+  (total, loan) => total + loan.outstanding,
+  0
+);
+
+availableCapital =
+  initialCapital
+  - loans.reduce((total, loan) => total + loan.amount, 0)
+  + capitalDevuelto
+  + capitalGrowth;
+
+update();
 
     alert('Se cargaron ' + loans.length + ' préstamos guardados.');
   } catch (error) {
