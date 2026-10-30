@@ -545,7 +545,109 @@ try {
   }
 });
 
-    document.getElementById('capitalLoanPayment').addEventListener('submit',event=>{event.preventDefault();const id=document.getElementById('capitalPaymentLoan').value;const loan=loans.find(item=>item.id===id);const principal=Number(document.getElementById('capitalPrincipalPaid').value);const interest=Number(document.getElementById('capitalInterestPaid').value);const percent=Number(document.getElementById('capitalStaffPercent').value);if(!loan){toast('Selecciona un préstamo válido.');return;}if(!Number.isFinite(principal)||principal<0||principal>loan.outstanding||!Number.isFinite(interest)||interest<0||!Number.isFinite(percent)||percent<0||percent>100||principal+interest<=0){toast('Revisa los importes y el porcentaje del personal.');return;}const staff=interest*percent/100;const reinvested=interest-staff;loan.outstanding-=principal;loan.interest+=interest;principalOutstanding-=principal;availableCapital+=principal+reinvested;interestReceived+=interest;staffAllocation+=staff;capitalGrowth+=reinvested;update();document.getElementById('capitalPrincipalPaid').value='0';document.getElementById('capitalInterestPaid').value='0';toast('Pago registrado. Personal: '+money(staff)+' · Interés reinvertido: '+money(reinvested)+'.');});
+    
+document.getElementById('capitalLoanPayment').addEventListener('submit', async event => {
+  event.preventDefault();
+
+  const id = document.getElementById('capitalPaymentLoan').value;
+  const loan = loans.find(item => item.id === id);
+  const principal = Number(document.getElementById('capitalPrincipalPaid').value);
+  const interest = Number(document.getElementById('capitalInterestPaid').value);
+  const percent = Number(document.getElementById('capitalStaffPercent').value);
+
+  if (!loan) {
+    toast('Selecciona un préstamo válido.');
+    return;
+  }
+
+  if (
+    !Number.isFinite(principal) ||
+    principal < 0 ||
+    principal > loan.outstanding ||
+    !Number.isFinite(interest) ||
+    interest < 0 ||
+    !Number.isFinite(percent) ||
+    percent < 0 ||
+    percent > 100 ||
+    principal + interest <= 0
+  ) {
+    toast('Revisa los importes y el porcentaje del personal.');
+    return;
+  }
+
+  const adminKey = prompt('Ingresa la clave administrativa:');
+
+  if (!adminKey) {
+    toast('Operación cancelada.');
+    return;
+  }
+
+  const boton = event.submitter;
+  if (boton) boton.disabled = true;
+
+  try {
+    const response = await fetch(JLC_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        accion: 'registrarPagoCapital',
+        adminKey: adminKey,
+        pago: {
+          prestamo_id: id,
+          capital_devuelto: principal,
+          interes_recibido: interest,
+          porcentajePersonal: percent,
+          referencia: 'Devolución de capital e intereses'
+        }
+      })
+    });
+
+    const textoRespuesta = await response.text();
+    let resultado;
+
+    try {
+      resultado = JSON.parse(textoRespuesta);
+    } catch (error) {
+      throw new Error('El servidor devolvió una respuesta que no se pudo interpretar.');
+    }
+
+    if (!response.ok || !resultado || resultado.ok !== true) {
+      throw new Error(resultado?.mensaje || 'No se pudo registrar el pago.');
+    }
+
+    const staff = Number(resultado.personal_asignado);
+    const reinvested = Number(resultado.interes_reinvertido);
+
+    loan.outstanding = Number(resultado.capital_pendiente);
+    loan.interest += interest;
+
+    principalOutstanding -= principal;
+    availableCapital += principal + reinvested;
+    interestReceived += interest;
+    staffAllocation += staff;
+    capitalGrowth += reinvested;
+
+    update();
+
+    document.getElementById('capitalPrincipalPaid').value = '0';
+    document.getElementById('capitalInterestPaid').value = '0';
+
+    toast(
+      'Pago guardado. Personal: ' + money(staff) +
+      ' · Interés reinvertido: ' + money(reinvested) + '.'
+    );
+
+  } catch (error) {
+    console.error('Error al registrar devolución:', error);
+    toast(error.message || 'No se pudo confirmar el registro. Verifica Google Sheets antes de intentarlo nuevamente.');
+
+  } finally {
+    if (boton) boton.disabled = false;
+  }
+});
+
     update();
   }
   document.addEventListener('DOMContentLoaded',setupCapitalControl);setupCapitalControl();
