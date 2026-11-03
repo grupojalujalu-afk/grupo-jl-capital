@@ -716,9 +716,11 @@ document.getElementById('capitalLoanPayment').addEventListener('submit', async e
   }
 });
 
-    update();
+      update();
+    cargarPrestamosGuardados();
   }
-  document.addEventListener('DOMContentLoaded',setupCapitalControl);setupCapitalControl();
+  document.addEventListener('DOMContentLoaded',setupCapitalControl);
+  setupCapitalControl();
 })();
 // Flujo demostrativo de solicitudes de depósito y retiro.
 (function(){
