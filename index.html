@@ -470,12 +470,17 @@ update();
 `;
     const heading=admin.querySelector('.section-head');if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
     function update(){
-      document.getElementById('capitalAvailable').textContent=money(availableCapital);
-      document.getElementById('capitalTotal').textContent=money(availableCapital+principalOutstanding);
-      document.getElementById('capitalLent').textContent=money(principalOutstanding);
-      document.getElementById('capitalInterest').textContent=money(interestReceived);
-      document.getElementById('capitalStaff').textContent=money(staffAllocation);
-      document.getElementById('capitalGrowth').textContent=money(capitalGrowth);
+     const setKPI = (id, value) => {
+  const elemento = document.getElementById(id);
+  if (elemento) elemento.textContent = value;
+};
+
+setKPI('capitalAvailable', money(availableCapital));
+setKPI('capitalTotal', money(availableCapital + principalOutstanding));
+setKPI('capitalLent', money(principalOutstanding));
+setKPI('capitalInterest', money(interestReceived));
+setKPI('capitalStaff', money(staffAllocation));
+setKPI('capitalGrowth', money(capitalGrowth));
       const select=document.getElementById('capitalPaymentLoan');const old=select.value;select.innerHTML='<option value="">Selecciona un préstamo</option>';
       loans.filter(loan=>loan.outstanding>0).forEach(loan=>{const option=document.createElement('option');option.value=loan.id;option.textContent=loan.id+' · '+loan.client+' · pendiente '+money(loan.outstanding);select.appendChild(option);});if([...select.options].some(option=>option.value===old))select.value=old;
       const body=document.getElementById('capitalLoanRows');body.replaceChildren();if(!loans.length){body.innerHTML='<tr><td colspan="6">Aún no se registraron préstamos en esta sesión.</td></tr>';return;}
