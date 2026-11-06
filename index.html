@@ -481,11 +481,54 @@ setKPI('capitalLent', money(principalOutstanding));
 setKPI('capitalInterest', money(interestReceived));
 setKPI('capitalStaff', money(staffAllocation));
 setKPI('capitalGrowth', money(capitalGrowth));
-      const select=document.getElementById('capitalPaymentLoan');const old=select.value;select.innerHTML='<option value="">Selecciona un préstamo</option>';
-      loans.filter(loan=>loan.outstanding>0).forEach(loan=>{const option=document.createElement('option');option.value=loan.id;option.textContent=loan.id+' · '+loan.client+' · pendiente '+money(loan.outstanding);select.appendChild(option);});if([...select.options].some(option=>option.value===old))select.value=old;
-      const body=document.getElementById('capitalLoanRows');body.replaceChildren();if(!loans.length){body.innerHTML='<tr><td colspan="6">Aún no se registraron préstamos en esta sesión.</td></tr>';return;}
-      loans.forEach(loan=>{const row=document.createElement('tr');[loan.id,loan.client,money(loan.amount),money(loan.outstanding),money(loan.interest),loan.outstanding===0?'Cancelado (demo)':'Activo (demo)'].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);});body.appendChild(row);});
-    }
+     
+const select = document.getElementById('capitalPaymentLoan');
+
+if (select) {
+  const old = select.value;
+  select.innerHTML = '<option value="">Selecciona un préstamo</option>';
+
+  loans.filter(loan => loan.outstanding > 0).forEach(loan => {
+    const option = document.createElement('option');
+    option.value = loan.id;
+    option.textContent = loan.id + ' · ' + loan.client +
+      ' · pendiente ' + money(loan.outstanding);
+    select.appendChild(option);
+  });
+
+  if ([...select.options].some(option => option.value === old)) {
+    select.value = old;
+  }
+}
+
+const body = document.getElementById('capitalLoanRows');
+
+if (body) {
+  body.replaceChildren();
+
+  if (!loans.length) {
+    body.innerHTML = '<tr><td colspan="6">Aún no se registraron préstamos.</td></tr>';
+  } else {
+    loans.forEach(loan => {
+      const row = document.createElement('tr');
+
+      [
+        loan.id,
+        loan.client,
+        money(loan.amount),
+        money(loan.outstanding),
+        money(loan.interest),
+        loan.outstanding === 0 ? 'Cancelado' : 'Activo'
+      ].forEach(value => {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        row.appendChild(cell);
+      });
+
+      body.appendChild(row);
+    });
+  }
+}
     
 document.getElementById('newCapitalLoan').addEventListener('submit', async event => {
   event.preventDefault();
