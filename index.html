@@ -312,6 +312,7 @@ update();
     alert(error.message || 'Error al cargar los préstamos.');
   }
 }
+  window.cargarPrestamosGuardados = cargarPrestamosGuardados;
   const money=value=>'S/ '+value.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
   function setupCapitalControl(){
     const admin=document.getElementById('admin');
