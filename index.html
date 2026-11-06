@@ -470,7 +470,7 @@ update();
   </div>
 
   <div class="notice">
-    Los registros de este panel son demostrativos. El préstamo se enviará a Google Sheets únicamente si el servidor confirma el registro.
+    Los préstamos y pagos se registran en Google Sheets. La operación se confirma cuando el servidor responde correctamente.
   </div>
 `;
     const heading=admin.querySelector('.section-head');if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
