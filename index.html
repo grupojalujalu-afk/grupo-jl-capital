@@ -448,7 +448,27 @@ update();
       </form>
     </div>
   </div>
+    <div class="box">
+      <h3>Registrar pago de cuota</h3>
 
+      <p class="muted" style="margin:5px 0 12px">
+        Selecciona una cuota pendiente y registra su pago completo.
+        El capital y los intereses ingresarán íntegramente al capital disponible.
+      </p>
+
+      <form id="capitalInstallmentPayment">
+        <label class="field">
+          <span>Cuota pendiente</span>
+          <select id="capitalPendingInstallment" required>
+            <option value="">Primero carga las cuotas pendientes</option>
+          </select>
+        </label>
+
+        <button class="primary" type="submit">
+          Registrar pago completo de cuota
+        </button>
+      </form>
+    </div>
   <div class="table-wrap" style="margin-top:18px">
     <table>
       <thead>
