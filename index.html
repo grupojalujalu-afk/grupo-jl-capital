@@ -689,7 +689,73 @@ try {
   }
 });
 
-    
+async function cargarCuotasPendientes() {
+  const adminKey = prompt(
+    'Ingresa la clave administrativa para cargar las cuotas pendientes:'
+  );
+
+  if (!adminKey) {
+    toast('Operación cancelada.');
+    return;
+  }
+
+  const select = document.getElementById('capitalPendingInstallment');
+
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Cargando cuotas...</option>';
+
+  try {
+    const response = await fetch(JLC_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        accion: 'listarCuotasPendientes',
+        adminKey: adminKey
+      })
+    });
+
+    const texto = await response.text();
+    const resultado = JSON.parse(texto);
+
+    if (!response.ok || !resultado || resultado.ok !== true) {
+      throw new Error(
+        resultado?.mensaje || 'No se pudieron cargar las cuotas.'
+      );
+    }
+
+    select.innerHTML = '<option value="">Selecciona una cuota pendiente</option>';
+
+    resultado.cuotas.forEach(cuota => {
+      const option = document.createElement('option');
+
+      option.value = cuota.id;
+
+      option.textContent =
+        cuota.prestamo_id +
+        ' · Cuota ' + cuota.numero +
+        ' · Vence: ' + cuota.vencimiento +
+        ' · Importe: ' + money(Number(cuota.importe));
+
+      select.appendChild(option);
+    });
+
+    if (resultado.cuotas.length === 0) {
+      select.innerHTML = '<option value="">No hay cuotas pendientes</option>';
+    }
+
+    toast('Se cargaron ' + resultado.cuotas.length + ' cuotas pendientes.');
+
+  } catch (error) {
+    console.error('Error al cargar cuotas pendientes:', error);
+
+    select.innerHTML = '<option value="">Error al cargar cuotas</option>';
+
+    toast(error.message || 'No se pudieron cargar las cuotas.');
+  }
+}    
 document.getElementById('capitalLoanPayment').addEventListener('submit', async event => {
   event.preventDefault();
 
