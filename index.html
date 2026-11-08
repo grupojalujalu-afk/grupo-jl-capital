@@ -864,7 +864,78 @@ document.getElementById('capitalLoanPayment').addEventListener('submit', async e
     if (boton) boton.disabled = false;
   }
 });
+document.getElementById('capitalInstallmentPayment')
+  .addEventListener('submit', async event => {
+    event.preventDefault();
 
+    const select = document.getElementById('capitalPendingInstallment');
+    const cuotaId = select.value;
+
+    if (!cuotaId) {
+      toast('Selecciona una cuota pendiente.');
+      return;
+    }
+
+    const cuotaSeleccionada = select.selectedOptions[0];
+    const boton = event.submitter;
+
+    const adminKey = prompt('Ingresa la clave administrativa:');
+
+    if (!adminKey) {
+      toast('Operación cancelada.');
+      return;
+    }
+
+    if (boton) boton.disabled = true;
+
+    try {
+      const response = await fetch(JLC_APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=UTF-8'
+        },
+        body: JSON.stringify({
+          accion: 'registrarPagoCuota',
+          adminKey: adminKey,
+          pago: {
+            cuota_id: cuotaId
+          }
+        })
+      });
+
+      const texto = await response.text();
+      let resultado;
+
+      try {
+        resultado = JSON.parse(texto);
+      } catch (error) {
+        throw new Error('El servidor devolvió una respuesta no válida.');
+      }
+
+      if (!response.ok || !resultado || resultado.ok !== true) {
+        throw new Error(
+          resultado?.mensaje || 'No se pudo registrar el pago de la cuota.'
+        );
+      }
+
+      toast(
+        'Cuota pagada correctamente. Capital ingresado: ' +
+        money(Number(resultado.capital_ingresado))
+      );
+
+      select.value = '';
+
+      await cargarPrestamosGuardados();
+      await cargarCuotasPendientes();
+
+    } catch (error) {
+      console.error('Error al registrar pago de cuota:', error);
+      toast(error.message || 'No se pudo confirmar el pago.');
+
+    } finally {
+      if (boton) boton.disabled = false;
+    }
+  });
       update();
   }
   document.addEventListener('DOMContentLoaded',setupCapitalControl);
