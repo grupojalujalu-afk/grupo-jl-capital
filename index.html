@@ -244,8 +244,10 @@ document.getElementById('signupForm').addEventListener('submit',function(e){e.pr
   let capitalGrowth=0;
   let loanSequence=1;
   const loans=[];
-  async function cargarPrestamosGuardados() {
-  const adminKey = prompt('Ingresa la clave administrativa para cargar los préstamos:');
+ async function cargarPrestamosGuardados(claveExistente) {
+  const adminKey = claveExistente || prompt(
+  'Ingresa la clave administrativa para cargar los préstamos:'
+);
 
   if (!adminKey) {
     alert('No se ingresó la clave administrativa.');
