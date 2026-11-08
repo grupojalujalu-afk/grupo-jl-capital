@@ -929,8 +929,8 @@ document.getElementById('capitalInstallmentPayment')
 
       select.value = '';
 
-      await cargarPrestamosGuardados();
-      await cargarCuotasPendientes();
+     await cargarPrestamosGuardados(adminKey);
+     await cargarCuotasPendientes(adminKey);
 
     } catch (error) {
       console.error('Error al registrar pago de cuota:', error);
