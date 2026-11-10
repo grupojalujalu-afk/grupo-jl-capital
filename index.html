@@ -506,7 +506,7 @@ update();
   const elemento = document.getElementById(id);
   if (elemento) elemento.textContent = value;
 };
-
+window.actualizarControlCapital = update;
 setKPI('capitalAvailable', money(availableCapital));
 setKPI('capitalTotal', money(availableCapital + principalOutstanding));
 setKPI('capitalLent', money(principalOutstanding));
