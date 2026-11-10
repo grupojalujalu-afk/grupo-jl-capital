@@ -763,8 +763,8 @@ async function cargarCuotasPendientes(claveExistente) {
     toast(error.message || 'No se pudieron cargar las cuotas.');
   }
 } 
- document.getElementById('loadPendingInstallments')
-  .addEventListener('click', cargarCuotasPendientes);   
+document.getElementById('loadPendingInstallments')
+  .addEventListener('click', () => cargarCuotasPendientes()); 
 document.getElementById('capitalLoanPayment').addEventListener('submit', async event => {
   event.preventDefault();
 
