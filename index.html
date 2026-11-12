@@ -763,6 +763,7 @@ async function cargarCuotasPendientes(claveExistente) {
 document.getElementById('loadPendingInstallments')
   .addEventListener('click', () => cargarCuotasPendientes()); 
     let capitalPaymentOperationId = null;
+    let capitalPaymentOperationSignature = null;
 document.getElementById('capitalLoanPayment').addEventListener('submit', async event => {
   event.preventDefault();
 
@@ -798,7 +799,20 @@ document.getElementById('capitalLoanPayment').addEventListener('submit', async e
     toast('Operación cancelada.');
     return;
   }
+  const firmaOperacion = JSON.stringify([
+    id,
+    principal,
+    interest,
+    percent
+  ]);
 
+  if (
+    capitalPaymentOperationId === null ||
+    capitalPaymentOperationSignature !== firmaOperacion
+  ) {
+    capitalPaymentOperationId = crypto.randomUUID();
+    capitalPaymentOperationSignature = firmaOperacion;
+  }
   const boton = event.submitter;
   if (boton) boton.disabled = true;
 
@@ -812,6 +826,7 @@ document.getElementById('capitalLoanPayment').addEventListener('submit', async e
         accion: 'registrarPagoCapital',
         adminKey: adminKey,
         pago: {
+          solicitud_id: capitalPaymentOperationId,
           prestamo_id: id,
           capital_devuelto: principal,
           interes_recibido: interest,
