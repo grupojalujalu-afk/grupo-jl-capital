@@ -762,6 +762,7 @@ async function cargarCuotasPendientes(claveExistente) {
 } 
 document.getElementById('loadPendingInstallments')
   .addEventListener('click', () => cargarCuotasPendientes()); 
+    let capitalPaymentOperationId = null;
 document.getElementById('capitalLoanPayment').addEventListener('submit', async event => {
   event.preventDefault();
 
