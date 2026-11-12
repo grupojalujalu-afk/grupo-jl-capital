@@ -860,7 +860,8 @@ document.getElementById('capitalLoanPayment').addEventListener('submit', async e
     interestReceived += interest;
     staffAllocation += staff;
     capitalGrowth += reinvested;
-
+    capitalPaymentOperationId = null;
+    capitalPaymentOperationSignature = null;
     update();
 
     document.getElementById('capitalPrincipalPaid').value = '0';
