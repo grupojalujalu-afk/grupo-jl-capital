@@ -343,7 +343,7 @@ resultado.prestamos.forEach(prestamo => {
     id: prestamo.id,
     amount: Number(prestamo.amount) || 0,
     outstanding: Number(prestamo.outstanding) || 0,
-    client: prestamo.id,
+    client: prestamo.client || 'Cliente no encontrado',
     interest: 0
   });
 });
@@ -536,7 +536,9 @@ if (typeof window.actualizarControlCapital === 'function') {
           Registrar pago completo de cuota
         </button>
       </form>
-    </div>
+      </div>
+  </div>
+
   <div class="table-wrap" style="margin-top:18px">
     <table>
       <thead>
