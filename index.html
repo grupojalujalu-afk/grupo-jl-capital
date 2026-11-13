@@ -563,7 +563,10 @@ if (typeof window.actualizarControlCapital === 'function') {
     Los préstamos y pagos se registran en Google Sheets. La operación se confirma cuando el servidor responde correctamente.
   </div>
 `;
-    
+  panel.querySelector('#loadAuditHistory')
+  .addEventListener('click', () => {
+    cargarHistorialAuditoria();
+  });  
   <div class="box" style="margin-top:18px">
     <h3>Historial de operaciones y auditoría</h3>
 
