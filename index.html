@@ -755,9 +755,9 @@ try {
 });
 
 async function cargarCuotasPendientes(claveExistente) {
-  const adminKey = prompt(
-  'Ingresa la misma clave administrativa que utilizas para entrar al panel:'
-);
+   const adminKey = claveExistente || prompt(
+    'Ingresa la misma clave administrativa que utilizas para entrar al panel:'
+  );
 
   if (!adminKey) {
     toast('Operación cancelada.');
