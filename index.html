@@ -1225,7 +1225,27 @@ document.addEventListener('DOMContentLoaded',function(){
           toast((resultado && resultado.mensaje) || 'DNI o contraseña incorrectos, o cuenta inactiva.');
           return;
         }
-        const client={dni:dni,name:resultado.cliente.nombre,cliente_id:resultado.cliente.cliente_id,active:true};
+       
+if (
+  !resultado.sesion ||
+  !resultado.sesion.token
+) {
+  throw new Error('No se pudo crear la sesión segura del cliente.');
+}
+
+const client = {
+  dni: dni,
+  name: resultado.cliente.nombre,
+  cliente_id: resultado.cliente.cliente_id,
+  active: true
+};
+
+window.jlcCurrentDemoClient = client;
+
+sessionStorage.setItem('jlcClientId', String(client.cliente_id || ''));
+sessionStorage.setItem('jlcClientToken', resultado.sesion.token);
+sessionStorage.setItem('jlcSessionExpiry', resultado.sesion.fecha_expiracion);
+
         window.jlcCurrentDemoClient=client;
         sessionStorage.setItem('jlcClientId',String(client.cliente_id || ''));
         document.getElementById('dashTitle').textContent='Hola, '+String(client.name || 'cliente').split(' ')[0]+' 👋';
