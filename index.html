@@ -172,7 +172,88 @@ footer { max-width:1200px; margin:0 auto; padding:20px clamp(20px,4vw,48px) 32px
 <section class="view" id="dashboard">
   <div class="demo-switch"><strong>Modo de demostración</strong><span>Datos inventados · Sin operaciones reales</span><button class="secondary" onclick="showView('admin')">Abrir panel admin →</button></div>
   <div class="dashboard-layout"><aside class="sidebar"><div class="side-label">Menú del cliente</div><button class="side-link active" onclick="dashTab(this,'resumen')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11 12 3l9 8v9H3z"/><path d="M9 20v-6h6v6"/></svg>Resumen</button><button class="side-link" onclick="dashTab(this,'ahorro')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 14h4"/></svg>Mi ahorro</button><button class="side-link" onclick="dashTab(this,'prestamos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h4"/></svg>Préstamos</button><button class="side-link" onclick="dashTab(this,'inversiones')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h17M8 15l4-4 3 2 5-7"/></svg>Inversiones</button><button class="side-link" onclick="dashTab(this,'movimientos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Movimientos</button><div class="side-label">Cuenta</div><button class="side-link" onclick="showView('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 17l5-5-5-5M15 12H3M21 4v16"/></svg>Salir de demo</button></aside>
-  <div class="dash-main"><div class="dash-head"><div><h2 id="dashTitle">Hola, Andrea 👋</h2><p id="dashSubtitle">Aquí tienes un resumen de tu actividad financiera.</p></div><div class="avatar">AR</div></div><div id="dashContent"><div class="kpis"><div class="kpi"><span>Saldo de ahorro</span><strong>S/ 8,450.00</strong><small>● Saldo de ejemplo</small></div><div class="kpi"><span>Inversiones simuladas</span><strong>S/ 2,000.00</strong><small>● Datos ilustrativos</small></div><div class="kpi"><span>Próxima cuota simulada</span><strong>S/ 245.00</strong><small style="color:var(--muted)">Vencimiento: 15 nov. 2026</small></div></div><div class="quick-actions"><button class="quick" onclick="actionDemo('Solicitud de depósito')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>Solicitar depósito</button><button class="quick" onclick="actionDemo('Solicitud de retiro')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Solicitar retiro</button><button class="quick" onclick="actionDemo('Simulador de préstamo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2M8 15h2m4 0h2"/></svg>Simular préstamo</button><button class="quick" onclick="actionDemo('Consulta de inversiones')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h17M8 15l4-4 3 2 5-7"/></svg>Ver inversiones</button></div><div class="content-grid"><div class="box"><h3>Evolución del ahorro</h3><p class="muted">Montos ficticios de los últimos 6 meses</p><div class="chart"><div class="bar-wrap"><div class="bar" style="height:34%"></div><span class="bar-label">Jun</span></div><div class="bar-wrap"><div class="bar" style="height:44%"></div><span class="bar-label">Jul</span></div><div class="bar-wrap"><div class="bar" style="height:41%"></div><span class="bar-label">Ago</span></div><div class="bar-wrap"><div class="bar" style="height:63%"></div><span class="bar-label">Sep</span></div><div class="bar-wrap"><div class="bar" style="height:72%"></div><span class="bar-label">Oct</span></div><div class="bar-wrap"><div class="bar" style="height:90%"></div><span class="bar-label">Nov</span></div></div></div><div class="box"><h3>Movimientos recientes</h3><p class="muted">Historial ilustrativo</p><div class="transaction"><div class="trans-icon">＋</div><div class="trans-info"><strong>Depósito de ejemplo</strong><small>18 oct. 2026 · Transferencia</small></div><div class="trans-amount">+S/ 500<small>Confirmado</small></div></div><div class="transaction"><div class="trans-icon">↗</div><div class="trans-info"><strong>Retiro de ejemplo</strong><small>12 oct. 2026 · Yape</small></div><div class="trans-amount">−S/ 120<small style="color:var(--muted)">Registrado</small></div></div><div class="transaction"><div class="trans-icon">✦</div><div class="trans-info"><strong>Interés ilustrativo</strong><small>01 oct. 2026</small></div><div class="trans-amount">+S/ 18<small>Simulación</small></div></div></div></div><div class="notice">Todos los datos de este panel son ficticios y solo muestran cómo podría verse tu portal. Las acciones no mueven dinero ni guardan transacciones reales.</div></div></div></div>
+  <div class="dash-main"><div class="dash-head"><div><h2 id="dashTitle">Hola, Andrea 👋</h2><p id="dashSubtitle">Aquí tienes un resumen de tu actividad financiera.</p></div><div class="avatar">AR</div></div>
+<div id="dashContent">
+  <div class="kpis">
+    <div class="kpi">
+      <span>Mis préstamos</span>
+      <strong id="clientLoanCount">0</strong>
+      <small>Registrados en mi cuenta</small>
+    </div>
+    <div class="kpi">
+      <span>Capital pendiente</span>
+      <strong id="clientOutstanding">S/ 0.00</strong>
+      <small>Saldo por devolver</small>
+    </div>
+    <div class="kpi">
+      <span>Cuotas pendientes</span>
+      <strong id="clientPendingCount">0</strong>
+      <small>Por pagar</small>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top:16px">
+    <h3>Mis préstamos</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Préstamo</th>
+            <th>Capital</th>
+            <th>Pendiente</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="clientLoanRows">
+          <tr><td colspan="4">Cargando información...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top:16px">
+    <h3>Mis cuotas</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Vencimiento</th>
+            <th>Importe</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="clientInstallmentRows">
+          <tr><td colspan="4">Cargando información...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top:16px">
+    <h3>Historial de pagos</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cuota</th>
+            <th>Importe</th>
+            <th>Referencia</th>
+          </tr>
+        </thead>
+        <tbody id="clientPaymentRows">
+          <tr><td colspan="4">Cargando información...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="notice">
+    La información de préstamos, cuotas y pagos se consultará desde tu cuenta.
+  </div>
+</div>
+
 </section>
 <section class="view" id="admin"><div class="demo-switch"><strong>Panel administrativo · Parcialmente conectado</strong><span>Acceso validado por Apps Script · algunas acciones siguen en demo</span><button class="secondary" onclick="showView('dashboard')">← Portal cliente</button></div><div class="section-head"><div><div class="eyebrow"><span class="dot"></span> Administración</div><h2>Centro de operaciones</h2><p>Ejemplo de cómo revisar solicitudes de registro, depósitos y retiros.</p></div><div class="avatar">JL</div></div><div class="kpis"><div class="kpi"><span>Solicitudes de registro</span><strong id="regCount">3</strong><small style="color:var(--warning)">Pendientes de revisión</small></div><div class="kpi"><span>Depósitos por revisar</span><strong>5</strong><small style="color:var(--warning)">Ejemplo</small></div><div class="kpi"><span>Retiros por revisar</span><strong>2</strong><small style="color:var(--warning)">Ejemplo</small></div></div><div class="box" style="margin-bottom:16px"><h3>Solicitudes de registro</h3><p class="muted" style="margin:5px 0 15px">Estas filas son ejemplos locales. La creación de clientes del panel sí puede guardarse en Google Sheets; aprobar estas filas aún no modifica cuentas reales.</p><div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Correo</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="registrations"><tr><td>María Torres</td><td>maria.demo@email.com</td><td>Cuenta de cliente</td><td><span class="status">Pendiente</span></td><td><div class="admin-actions"><button onclick="reviewRow(this,true)">Aprobar</button><button onclick="reviewRow(this,false)">Rechazar</button></div></td></tr><tr><td>José Ramírez</td><td>jose.demo@email.com</td><td>Cuenta de cliente</td><td><span class="status">Pendiente</span></td><td><div class="admin-actions"><button onclick="reviewRow(this,true)">Aprobar</button><button onclick="reviewRow(this,false)">Rechazar</button></div></td></tr><tr><td>Lucía Paredes</td><td>lucia.demo@email.com</td><td>Consulta de ahorro</td><td><span class="status good">Revisada</span></td><td><span class="muted">Sin acciones</span></td></tr></tbody></table></div></div><div class="box"><h3>Depósitos y retiros</h3><p class="muted" style="margin:5px 0 15px">Ejemplo de operaciones que deben verificarse antes de confirmar.</p><div class="table-wrap"><table><thead><tr><th>ID</th><th>Operación</th><th>Método</th><th>Importe</th><th>Estado</th><th>Acción</th></tr></thead><tbody><tr><td>DEMO-101</td><td>Depósito</td><td>Yape</td><td>S/ 200.00</td><td><span class="status">Pendiente</span></td><td><button class="secondary" onclick="toast('Demo: en el sistema real, primero se verificaría la recepción del dinero.')">Revisar</button></td></tr><tr><td>DEMO-102</td><td>Retiro</td><td>Transferencia</td><td>S/ 100.00</td><td><span class="status">Pendiente</span></td><td><button class="secondary" onclick="toast('Demo: en producción se validaría el saldo y se registraría la confirmación del pago.')">Revisar</button></td></tr></tbody></table></div><div class="notice">En producción, aprobar una solicitud de depósito no debe equivaler a confirmar el dinero recibido. Cada decisión tendrá usuario responsable, fecha, referencia y registro de auditoría.</div></div></section>
 </main>
