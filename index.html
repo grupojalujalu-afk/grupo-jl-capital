@@ -562,14 +562,9 @@ if (typeof window.actualizarControlCapital === 'function') {
   <div class="notice">
     Los préstamos y pagos se registran en Google Sheets. La operación se confirma cuando el servidor responde correctamente.
   </div>
-`;
-  panel.querySelector('#loadAuditHistory')
-  .addEventListener('click', () => {
-    cargarHistorialAuditoria();
-  });  
+  
   <div class="box" style="margin-top:18px">
     <h3>Historial de operaciones y auditoría</h3>
-
     <p class="muted" style="margin:5px 0 12px">
       Consulta los movimientos registrados por el administrador.
     </p>
@@ -598,6 +593,11 @@ if (typeof window.actualizarControlCapital === 'function') {
     </div>
   </div>
 
+`;
+  panel.querySelector('#loadAuditHistory')
+  .addEventListener('click', () => {
+    cargarHistorialAuditoria();
+  });  
     const heading=admin.querySelector('.section-head');if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
     function update(){
      const setKPI = (id, value) => {
