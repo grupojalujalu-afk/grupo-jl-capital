@@ -182,25 +182,83 @@ footer { max-width:1200px; margin:0 auto; padding:20px clamp(20px,4vw,48px) 32px
 <script>
 const JLC_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwYZ-_yX9waEhxDdr6yFmKvn0XqdBZSm8J9G2E_amoRaP4rHMq-tvxoFUT5mdjCXU7i/exec';
 async function showView(id){
-  if(id==='admin'&&sessionStorage.getItem('jlcAdminVerified')!=='1'){
-    const entered=prompt('Acceso de administrador. Introduce la clave configurada en las propiedades de Apps Script:');
-    if(!entered){toast('Acceso administrativo cancelado.');return;}
+
+  if(id === 'admin'){
+
+    const entered = prompt(
+      'Acceso de administrador. Introduce tu clave administrativa:'
+    );
+
+    if(!entered){
+      toast('Acceso administrativo cancelado.');
+      return;
+    }
+
     try{
-      const response=await fetch(JLC_APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({accion:'verificarAdmin',adminKey:entered})});
-      if(!response.ok)throw new Error('Estado HTTP '+response.status);
-      const result=await response.json();
-      if(!result||result.ok!==true){toast((result&&result.mensaje)||'Clave administrativa incorrecta.');return;}
-     sessionStorage.setItem('jlcAdminVerified','1');
+      const response = await fetch(JLC_APPS_SCRIPT_URL,{
+        method:'POST',
+        headers:{
+          'Content-Type':'text/plain;charset=UTF-8'
+        },
+        body:JSON.stringify({
+          accion:'verificarAdmin',
+          adminKey:entered
+        })
+      });
+
+      if(!response.ok){
+        throw new Error('Estado HTTP '+response.status);
+      }
+
+      const result = await response.json();
+
+      if(!result || result.ok !== true){
+        toast((result && result.mensaje) || 'Clave administrativa incorrecta.');
+        return;
+      }
+
+      sessionStorage.setItem('jlcAdminVerified','1');
+
+      document.querySelectorAll('.view').forEach(v=>{
+        v.classList.remove('active');
+      });
+
+      const target = document.getElementById(id);
+
+      if(target){
+        target.classList.add('active');
+      }
+
+      window.scrollTo({
+        top:0,
+        behavior:'smooth'
+      });
+
+      await window.cargarPrestamosGuardados(entered);
+
+      return;
+
     }catch(error){
       console.error('Error al validar administrador:',error);
-      toast('No se pudo validar el acceso. Revisa el despliegue de Apps Script y la conexión.');
+      toast('No se pudo validar el acceso o cargar los datos. Revisa la conexión.');
       return;
     }
   }
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const target=document.getElementById(id);
-  if(target)target.classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
+
+  document.querySelectorAll('.view').forEach(v=>{
+    v.classList.remove('active');
+  });
+
+  const target = document.getElementById(id);
+
+  if(target){
+    target.classList.add('active');
+  }
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
 }
 let toastTimer;
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.display='none',3800);}
