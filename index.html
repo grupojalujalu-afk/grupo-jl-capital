@@ -295,7 +295,10 @@ const capitalDevuelto = Number(resultado.capitalDevueltoTotal) || 0;
 interestReceived = Number(resultado.interesRecibidoTotal) || 0;
 staffAllocation = Number(resultado.personalAsignadoTotal) || 0;
 capitalGrowth = interestReceived - staffAllocation;
-
+console.log('RESPUESTA COMPLETA:', resultado);
+console.log('Capital devuelto:', resultado.capitalDevueltoTotal);
+console.log('Intereses recibidos:', resultado.interesRecibidoTotal);
+console.log('Personal asignado:', resultado.personalAsignadoTotal);
 principalOutstanding = loans.reduce(
   (total, loan) => total + loan.outstanding,
   0
