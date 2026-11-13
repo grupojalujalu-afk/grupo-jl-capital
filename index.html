@@ -190,8 +190,8 @@ async function showView(id){
       if(!response.ok)throw new Error('Estado HTTP '+response.status);
       const result=await response.json();
       if(!result||result.ok!==true){toast((result&&result.mensaje)||'Clave administrativa incorrecta.');return;}
-      sessionStorage.setItem('jlcAdminVerified','1');
-      cargarPrestamosGuardados();
+     sessionStorage.setItem('jlcAdminVerified','1');
+     cargarPrestamosGuardados(entered);
     }catch(error){
       console.error('Error al validar administrador:',error);
       toast('No se pudo validar el acceso. Revisa el despliegue de Apps Script y la conexión.');
