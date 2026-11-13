@@ -563,6 +563,38 @@ if (typeof window.actualizarControlCapital === 'function') {
     Los préstamos y pagos se registran en Google Sheets. La operación se confirma cuando el servidor responde correctamente.
   </div>
 `;
+    
+  <div class="box" style="margin-top:18px">
+    <h3>Historial de operaciones y auditoría</h3>
+
+    <p class="muted" style="margin:5px 0 12px">
+      Consulta los movimientos registrados por el administrador.
+    </p>
+
+    <button class="primary" type="button" id="loadAuditHistory">
+      Cargar historial de operaciones
+    </button>
+
+    <div class="table-wrap" style="margin-top:14px">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Resultado</th>
+            <th>ID del evento</th>
+          </tr>
+        </thead>
+        <tbody id="auditRows">
+          <tr>
+            <td colspan="5">Pulsa «Cargar historial de operaciones».</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
     const heading=admin.querySelector('.section-head');if(heading)heading.insertAdjacentElement('afterend',panel);else admin.prepend(panel);
     function update(){
      const setKPI = (id, value) => {
