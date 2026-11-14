@@ -1252,6 +1252,112 @@ document.getElementById('capitalInstallmentPayment')
 })();
 function reviewRow(button,approved){const row=button.closest('tr');const state=row.querySelector('.status');state.textContent=approved?'Aprobada (demo)':'Rechazada (demo)';state.className='status '+(approved?'good':'bad');row.querySelector('.admin-actions').innerHTML='<span class="muted">Acción registrada localmente</span>';toast('Cambio de estado solo en la demo; no crea ni bloquea una cuenta real.');}
 function dashTab(button,tab){document.querySelectorAll('.side-link').forEach(b=>b.classList.remove('active'));button.classList.add('active');const titles={resumen:['Hola, Andrea 👋','Aquí tienes un resumen de tu actividad financiera.'],ahorro:['Mi ahorro','Consulta ilustrativa de tu ahorro y solicitudes.'],prestamos:['Mis préstamos','Simulaciones y estado de solicitudes de préstamo.'],inversiones:['Mis inversiones','Vista ilustrativa de productos y plazos.'],movimientos:['Mis movimientos','Registro de ejemplo de operaciones recientes.']};document.getElementById('dashTitle').textContent=titles[tab][0];document.getElementById('dashSubtitle').textContent=titles[tab][1];if(tab!=='resumen'){toast(titles[tab][0]+': sección de demostración. Los datos son ficticios.');}}
+
+async function cargarDatosPanelCliente() {
+  const token = sessionStorage.getItem('jlcClientToken');
+
+  if (!token) {
+    throw new Error('Tu sesión no está disponible. Inicia sesión nuevamente.');
+  }
+
+  const respuesta = await fetch(JLC_APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=UTF-8'
+    },
+    body: JSON.stringify({
+      accion: 'obtenerDatosPanelCliente',
+      token: token
+    })
+  });
+
+  if (!respuesta.ok) {
+    throw new Error('No se pudieron consultar los datos del cliente.');
+  }
+
+  const resultado = await respuesta.json();
+
+  if (!resultado || resultado.ok !== true) {
+    throw new Error(resultado?.mensaje || 'No se pudieron cargar tus datos.');
+  }
+
+  const prestamos = resultado.prestamos || [];
+  const cuotas = resultado.cuotas || [];
+  const pagos = resultado.pagos || [];
+
+  const dinero = valor =>
+    Number(valor || 0).toLocaleString('es-PE', {
+      style: 'currency',
+      currency: 'PEN'
+    });
+
+  const escapar = valor =>
+    String(valor ?? '').replace(/[&<>"']/g, caracter => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[caracter]);
+
+  const pendientes = cuotas.filter(c =>
+    String(c.estado).trim().toUpperCase() !== 'PAGADA'
+  );
+
+  const capitalPendiente = prestamos.reduce((total, p) =>
+    total + Number(p.capital_pendiente || 0), 0
+  );
+
+  document.getElementById('clientLoanCount').textContent =
+    prestamos.length;
+
+  document.getElementById('clientOutstanding').textContent =
+    dinero(capitalPendiente);
+
+  document.getElementById('clientPendingCount').textContent =
+    pendientes.length;
+
+  document.getElementById('clientLoanRows').innerHTML =
+    prestamos.length
+      ? prestamos.map(p => `
+          <tr>
+            <td>${escapar(p.prestamo_id)}</td>
+            <td>${dinero(p.capital)}</td>
+            <td>${dinero(p.capital_pendiente)}</td>
+            <td>${escapar(p.estado)}</td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="4">No tienes préstamos registrados.</td></tr>';
+
+  document.getElementById('clientInstallmentRows').innerHTML =
+    cuotas.length
+      ? cuotas.map(c => `
+          <tr>
+            <td>${escapar(c.numero)}</td>
+            <td>${escapar(c.vencimiento)}</td>
+            <td>${dinero(c.importe)}</td>
+            <td>${escapar(c.estado)}</td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="4">No tienes cuotas registradas.</td></tr>';
+
+  const numeroCuota = new Map(
+    cuotas.map(c => [String(c.cuota_id), c.numero])
+  );
+
+  document.getElementById('clientPaymentRows').innerHTML =
+    pagos.length
+      ? pagos.map(p => `
+          <tr>
+            <td>${escapar(p.fecha)}</td>
+            <td>${escapar(numeroCuota.get(String(p.cuota_id)) ?? p.cuota_id)}</td>
+            <td>${dinero(p.importe)}</td>
+            <td>${escapar(p.referencia)}</td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="4">Todavía no tienes pagos registrados.</td></tr>';
+}
+
 </script>
 <script>
 // Panel de preparación para operar con dinero real: informa requisitos sin simular conexiones inexistentes.
