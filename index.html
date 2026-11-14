@@ -1358,6 +1358,36 @@ async function cargarDatosPanelCliente() {
       : '<tr><td colspan="4">Todavía no tienes pagos registrados.</td></tr>';
 }
 
+async function cerrarSesionPortalCliente() {
+  const token = sessionStorage.getItem('jlcClientToken');
+
+  try {
+    if (token) {
+      await fetch(JLC_APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=UTF-8'
+        },
+        body: JSON.stringify({
+          accion: 'cerrarSesionCliente',
+          token: token
+        })
+      });
+    }
+  } catch (error) {
+    console.error('Error al cerrar la sesión en el servidor:', error);
+  } finally {
+    sessionStorage.removeItem('jlcClientId');
+    sessionStorage.removeItem('jlcClientToken');
+    sessionStorage.removeItem('jlcSessionExpiry');
+
+    window.jlcCurrentDemoClient = null;
+
+    showView('home');
+    toast('Sesión cerrada.');
+  }
+}
+
 </script>
 <script>
 // Panel de preparación para operar con dinero real: informa requisitos sin simular conexiones inexistentes.
