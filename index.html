@@ -1437,8 +1437,17 @@ sessionStorage.setItem('jlcSessionExpiry', resultado.sesion.fecha_expiracion);
         sessionStorage.setItem('jlcClientId',String(client.cliente_id || ''));
         document.getElementById('dashTitle').textContent='Hola, '+String(client.name || 'cliente').split(' ')[0]+' 👋';
         document.getElementById('dashSubtitle').textContent='Sesión iniciada para el DNI terminado en '+dni.slice(-4)+'. La información financiera del panel aún debe conectarse al servidor.';
-        showView('dashboard');
-        toast('Credenciales verificadas con Google Apps Script.');
+       
+showView('dashboard');
+
+try {
+  await cargarDatosPanelCliente();
+  toast('Sesión iniciada. Información cargada desde Google Sheets.');
+} catch (error) {
+  console.error('Error al cargar el panel:', error);
+  toast(error.message || 'No se pudieron cargar los datos del panel.');
+}
+
       }catch(error){
         console.error('Error al conectar con Apps Script:',error);
         toast('No se pudo leer la respuesta de Apps Script. Puede ser una restricción CORS/redirección. Revisa el despliegue y la consola del navegador.');
