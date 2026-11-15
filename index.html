@@ -458,6 +458,61 @@ if (typeof window.actualizarControlCapital === 'function') {
   }
 }
   window.cargarPrestamosGuardados = cargarPrestamosGuardados;
+  
+async function cargarReportesFinancieros(claveExistente) {
+  const adminKey = claveExistente || prompt(
+    'Ingresa la clave administrativa para consultar los reportes:'
+  );
+
+  if (!adminKey) {
+    toast('Consulta de reportes cancelada.');
+    return;
+  }
+
+  try {
+    const response = await fetch(JLC_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        accion: 'obtenerReportesFinancieros',
+        adminKey: adminKey
+      })
+    });
+
+    const texto = await response.text();
+    let resultado;
+
+    try {
+      resultado = JSON.parse(texto);
+    } catch (error) {
+      throw new Error('El servidor no devolvió una respuesta JSON válida.');
+    }
+
+    if (!response.ok || !resultado || resultado.ok !== true) {
+      throw new Error(
+        resultado?.mensaje || 'No se pudieron cargar los reportes.'
+      );
+    }
+
+    console.log('REPORTES FINANCIEROS:', resultado);
+
+    window.reportesFinancieros = resultado;
+
+    toast('Reportes financieros cargados correctamente.');
+
+    return resultado;
+
+  } catch (error) {
+    console.error('Error al cargar reportes:', error);
+    toast(error.message || 'Error al consultar los reportes.');
+    return null;
+  }
+}
+
+window.cargarReportesFinancieros = cargarReportesFinancieros;
+
   const money=value=>'S/ '+value.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
   function setupCapitalControl(){
     const admin=document.getElementById('admin');
