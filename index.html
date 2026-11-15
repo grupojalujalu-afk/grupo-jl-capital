@@ -1435,8 +1435,13 @@ document.getElementById('capitalInstallmentPayment')
   });
       update();
   }
-  document.addEventListener('DOMContentLoaded',setupCapitalControl);
+ document.addEventListener('DOMContentLoaded', () => {
   setupCapitalControl();
+  setupReportesFinancieros();
+});
+
+setupCapitalControl();
+setupReportesFinancieros();
 })();
 // Flujo demostrativo de solicitudes de depósito y retiro.
 (function(){
