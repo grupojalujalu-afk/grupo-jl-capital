@@ -514,6 +514,183 @@ async function cargarReportesFinancieros(claveExistente) {
 window.cargarReportesFinancieros = cargarReportesFinancieros;
 
   const money=value=>'S/ '+value.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  
+function setupReportesFinancieros() {
+  const admin = document.getElementById('admin');
+
+  if (!admin || document.getElementById('reportesFinancieros')) {
+    return;
+  }
+
+  const panel = document.createElement('div');
+  panel.className = 'box';
+  panel.id = 'reportesFinancieros';
+  panel.style.marginBottom = '16px';
+
+  panel.innerHTML = `
+    <h3>Reportes financieros</h3>
+    <p class="muted">
+      Consulta los resultados financieros calculados directamente desde Google Sheets.
+    </p>
+
+    <button class="primary" type="button" id="btnCargarReportes">
+      Cargar reportes financieros
+    </button>
+
+    <div id="contenidoReportes" style="margin-top:16px">
+      <p class="muted">Pulsa el botón para consultar los reportes.</p>
+    </div>
+  `;
+
+  const capitalControl = document.getElementById('capitalControl');
+
+  if (capitalControl) {
+    capitalControl.insertAdjacentElement('beforebegin', panel);
+  } else {
+    const heading = admin.querySelector('.section-head');
+    if (heading) {
+      heading.insertAdjacentElement('afterend', panel);
+    } else {
+      admin.prepend(panel);
+    }
+  }
+
+  panel.querySelector('#btnCargarReportes')
+    .addEventListener('click', async () => {
+      const boton = panel.querySelector('#btnCargarReportes');
+      boton.disabled = true;
+      boton.textContent = 'Consultando Google Sheets...';
+
+      try {
+        const resultado = await cargarReportesFinancieros();
+
+        if (!resultado || resultado.ok !== true) {
+          return;
+        }
+
+        const r = resultado.resumen;
+        const contenido = panel.querySelector('#contenidoReportes');
+
+        const formato = valor => 'S/ ' +
+          Number(valor || 0).toLocaleString('es-PE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+
+        contenido.innerHTML = `
+          <div class="kpis"
+               style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+
+            <div class="kpi">
+              <span>Capital disponible</span>
+              <strong>${formato(r.capitalDisponible)}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Capital total</span>
+              <strong>${formato(r.capitalTotal)}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Total prestado</span>
+              <strong>${formato(r.totalPrestamos)}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Capital pendiente</span>
+              <strong>${formato(r.capitalPendiente)}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Capital recuperado</span>
+              <strong>${formato(r.capitalDevuelto)}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Intereses recibidos</span>
+              <strong>${formato(r.interesesRecibidos)}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Asignado a personal</span>
+              <strong>${formato(r.personalAsignado)}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Intereses reinvertidos</span>
+              <strong>${formato(r.interesReinvertido)}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Cuotas pagadas</span>
+              <strong>${r.cuotasPagadas}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Cuotas pendientes</span>
+              <strong>${r.cuotasPendientes}</strong>
+            </div>
+
+            <div class="kpi">
+              <span>Número de préstamos</span>
+              <strong>${r.cantidadPrestamos}</strong>
+            </div>
+          </div>
+
+          <h4 style="margin-top:22px">Historial de movimientos de capital</h4>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Importe</th>
+                  <th>Capital devuelto</th>
+                  <th>Interés</th>
+                  <th>Personal</th>
+                  <th>Préstamo</th>
+                </tr>
+              </thead>
+              <tbody id="reportesMovimientos"></tbody>
+            </table>
+          </div>
+        `;
+
+        const cuerpo = contenido.querySelector('#reportesMovimientos');
+
+        if (!resultado.movimientos.length) {
+          cuerpo.innerHTML =
+            '<tr><td colspan="7">No hay movimientos registrados.</td></tr>';
+        } else {
+          resultado.movimientos.forEach(movimiento => {
+            const fila = document.createElement('tr');
+
+            [
+              movimiento.fecha,
+              movimiento.tipo,
+              formato(movimiento.importe),
+              formato(movimiento.capital_devuelto),
+              formato(movimiento.interes_recibido),
+              formato(movimiento.personal_asignado),
+              movimiento.prestamo_id
+            ].forEach(valor => {
+              const celda = document.createElement('td');
+              celda.textContent = valor;
+              fila.appendChild(celda);
+            });
+
+            cuerpo.appendChild(fila);
+          });
+        }
+
+      } finally {
+        boton.disabled = false;
+        boton.textContent = 'Actualizar reportes financieros';
+      }
+    });
+}
+
   function setupCapitalControl(){
     const admin=document.getElementById('admin');
     if(!admin||document.getElementById('capitalControl'))return;
