@@ -1666,7 +1666,107 @@ setupAlertasVencimiento();
   document.addEventListener('DOMContentLoaded',setupStaffPayments);setupStaffPayments();
 })();
 function reviewRow(button,approved){const row=button.closest('tr');const state=row.querySelector('.status');state.textContent=approved?'Aprobada (demo)':'Rechazada (demo)';state.className='status '+(approved?'good':'bad');row.querySelector('.admin-actions').innerHTML='<span class="muted">Acción registrada localmente</span>';toast('Cambio de estado solo en la demo; no crea ni bloquea una cuenta real.');}
-function dashTab(button,tab){document.querySelectorAll('.side-link').forEach(b=>b.classList.remove('active'));button.classList.add('active');const titles={resumen:[`Hola, ${window.jlcNombreCliente || 'Cliente'} 👋`,'Aquí tienes un resumen de tu actividad financiera.'],ahorro:['Mi ahorro','Consulta ilustrativa de tu ahorro y solicitudes.'],prestamos:['Mis préstamos','Simulaciones y estado de solicitudes de préstamo.'],inversiones:['Mis inversiones','Vista ilustrativa de productos y plazos.'],movimientos:['Mis movimientos','Registro de ejemplo de operaciones recientes.']};document.getElementById('dashTitle').textContent=titles[tab][0];document.getElementById('dashSubtitle').textContent=titles[tab][1];if(tab!=='resumen'){toast(titles[tab][0]+': sección de demostración. Los datos son ficticios.');}}
+
+function dashTab(button, tab) {
+  document.querySelectorAll('.side-link').forEach(b =>
+    b.classList.remove('active')
+  );
+
+  button.classList.add('active');
+
+  const nombre = window.jlcNombreCliente || 'Cliente';
+
+  const titles = {
+    resumen: [
+      `Hola, ${nombre} 👋`,
+      'Aquí tienes un resumen de tu actividad financiera.'
+    ],
+    ahorro: [
+      'Mi ahorro',
+      'Consulta ilustrativa de tu ahorro y solicitudes.'
+    ],
+    prestamos: [
+      'Mis préstamos',
+      'Simulaciones y estado de solicitudes de préstamo.'
+    ],
+    inversiones: [
+      'Mis inversiones',
+      'Vista ilustrativa de productos y plazos.'
+    ],
+    movimientos: [
+      'Mis movimientos',
+      'Registro de ejemplo de operaciones recientes.'
+    ],
+    cuenta: [
+      'Mi cuenta',
+      'Consulta tus datos personales y estado de cuenta.'
+    ]
+  };
+
+  const titulo = document.getElementById('dashTitle');
+  const subtitulo = document.getElementById('dashSubtitle');
+  const contenido = document.getElementById('dashContent');
+
+  titulo.textContent = titles[tab][0];
+  subtitulo.textContent = titles[tab][1];
+
+  let panel = document.getElementById('clientAccountPanel');
+
+  if (tab === 'cuenta') {
+    if (contenido) contenido.style.display = 'none';
+
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'clientAccountPanel';
+      contenido.insertAdjacentElement('afterend', panel);
+    }
+
+    const cliente = window.jlcDatosCliente || {};
+
+    const escaparCuenta = valor =>
+      String(valor ?? '').replace(/[&<>"']/g, caracter => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[caracter]);
+
+    panel.innerHTML = `
+      <div class="box">
+        <h3>Información personal</h3>
+        <div class="kpis">
+          <div class="kpi">
+            <span>Nombre completo</span>
+            <strong>${escaparCuenta(cliente.nombre || nombre)}</strong>
+          </div>
+          <div class="kpi">
+            <span>DNI</span>
+            <strong>${escaparCuenta(cliente.dni || 'No disponible')}</strong>
+          </div>
+          <div class="kpi">
+            <span>Estado de cuenta</span>
+            <strong>${escaparCuenta(cliente.estado || 'No disponible')}</strong>
+          </div>
+        </div>
+        <p class="muted">
+          Estos datos corresponden a tu cuenta registrada.
+        </p>
+      </div>
+    `;
+
+    panel.style.display = 'block';
+    return;
+  }
+
+  if (panel) panel.style.display = 'none';
+
+  if (contenido) contenido.style.display = 'block';
+
+  if (tab !== 'resumen') {
+    toast(titles[tab][0] + ': sección de demostración. Los datos son ficticios.');
+  }
+}
 
 async function cargarDatosPanelCliente() {
   const token = sessionStorage.getItem('jlcClientToken');
