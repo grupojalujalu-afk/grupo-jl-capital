@@ -789,6 +789,68 @@ async function cargarAlertasVencimiento(claveExistente) {
     toast('Error al cargar las alertas: ' + error.message);
   }
 }
+  function renderizarAlertasVencimiento() {
+  const panel = document.getElementById('panelAlertasVencimiento');
+  const datos = window.alertasVencimiento;
+
+  if (!panel || !datos) return;
+
+  const proximas = datos.proximas || [];
+  const atrasadas = datos.atrasadas || [];
+
+  const formato = valor => 'S/ ' +
+    Number(valor || 0).toLocaleString('es-PE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+  panel.querySelector('#totalCuotasProximas').textContent =
+    proximas.length;
+
+  panel.querySelector('#totalCuotasAtrasadas').textContent =
+    atrasadas.length;
+
+  function crearTabla(lista, esAtrasada) {
+    if (!lista.length) {
+      return '<p class="muted">No hay cuotas en esta categoría.</p>';
+    }
+
+    const filas = lista.map(cuota => `
+      <tr>
+        <td>${cuota.cliente}</td>
+        <td>${cuota.numero}</td>
+        <td>${formato(cuota.importe)}</td>
+        <td>${cuota.vencimiento}</td>
+        <td>${esAtrasada
+          ? cuota.dias_atraso + ' días'
+          : 'Próxima'}</td>
+      </tr>
+    `).join('');
+
+    return `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Cuota</th>
+              <th>Importe</th>
+              <th>Vencimiento</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>${filas}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  panel.querySelector('#listaCuotasProximas').innerHTML =
+    crearTabla(proximas, false);
+
+  panel.querySelector('#listaCuotasAtrasadas').innerHTML =
+    crearTabla(atrasadas, true);
+}
   function setupCapitalControl(){
     const admin=document.getElementById('admin');
     if(!admin||document.getElementById('capitalControl'))return;
