@@ -690,6 +690,65 @@ function setupReportesFinancieros() {
       }
     });
 }
+  function setupAlertasVencimiento() {
+  const admin = document.getElementById('admin');
+
+  if (!admin || document.getElementById('panelAlertasVencimiento')) {
+    return;
+  }
+
+  const panel = document.createElement('div');
+  panel.className = 'box';
+  panel.id = 'panelAlertasVencimiento';
+  panel.style.marginBottom = '16px';
+
+  panel.innerHTML = `
+    <h3>Alertas de vencimiento y cuotas atrasadas</h3>
+
+    <p class="muted">
+      Consulta las cuotas que están próximas a vencer o que ya están atrasadas.
+    </p>
+
+    <button type="button" id="btnCargarAlertas">
+      Actualizar alertas
+    </button>
+
+    <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:15px">
+      <div class="box">
+        <div class="muted">Próximas a vencer</div>
+        <h2 id="totalCuotasProximas">0</h2>
+      </div>
+
+      <div class="box">
+        <div class="muted">Cuotas atrasadas</div>
+        <h2 id="totalCuotasAtrasadas">0</h2>
+      </div>
+    </div>
+
+    <h4 style="margin-top:20px">Próximas a vencer</h4>
+    <div id="listaCuotasProximas" class="muted">
+      Presiona Actualizar alertas.
+    </div>
+
+    <h4 style="margin-top:20px">Cuotas atrasadas</h4>
+    <div id="listaCuotasAtrasadas" class="muted">
+      Presiona Actualizar alertas.
+    </div>
+  `;
+
+  const heading = admin.querySelector('.section-head');
+
+  if (heading) {
+    heading.insertAdjacentElement('afterend', panel);
+  } else {
+    admin.prepend(panel);
+  }
+
+  panel.querySelector('#btnCargarAlertas')
+    .addEventListener('click', () => {
+      cargarAlertasVencimiento();
+    });
+}
 async function cargarAlertasVencimiento(claveExistente) {
   const adminKey = claveExistente || prompt(
     'Ingresa tu clave administrativa:'
