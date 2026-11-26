@@ -690,7 +690,46 @@ function setupReportesFinancieros() {
       }
     });
 }
+async function cargarAlertasVencimiento(claveExistente) {
+  const adminKey = claveExistente || prompt(
+    'Ingresa tu clave administrativa:'
+  );
 
+  if (!adminKey) {
+    return;
+  }
+
+  try {
+    const response = await fetch(JLC_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        accion: 'obtenerAlertasVencimiento',
+        adminKey: adminKey
+      })
+    });
+
+    const resultado = await response.json();
+
+    if (!resultado.ok) {
+      throw new Error(resultado.mensaje || 'No se pudieron cargar las alertas.');
+    }
+
+    window.alertasVencimiento = resultado;
+
+    if (typeof renderizarAlertasVencimiento === 'function') {
+      renderizarAlertasVencimiento();
+    }
+
+    return resultado;
+
+  } catch (error) {
+    console.error('Error al cargar alertas:', error);
+    toast('Error al cargar las alertas: ' + error.message);
+  }
+}
   function setupCapitalControl(){
     const admin=document.getElementById('admin');
     if(!admin||document.getElementById('capitalControl'))return;
