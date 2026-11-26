@@ -1695,7 +1695,30 @@ async function cargarDatosPanelCliente() {
   if (!resultado || resultado.ok !== true) {
     throw new Error(resultado?.mensaje || 'No se pudieron cargar tus datos.');
   }
+// Mostrar el nombre real del cliente.
+const nombreCliente = String(
+  resultado.cliente?.nombre || 'Cliente'
+).trim();
 
+const saludoCliente = document.getElementById('dashTitle');
+
+if (saludoCliente) {
+  saludoCliente.textContent = `Hola, ${nombreCliente} 👋`;
+}
+
+// Crear iniciales para el avatar.
+const avatarCliente = document.querySelector('#dashboard .avatar');
+
+if (avatarCliente) {
+  const iniciales = nombreCliente
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(palabra => palabra.charAt(0).toUpperCase())
+    .join('');
+
+  avatarCliente.textContent = iniciales || 'CL';
+}
   const prestamos = resultado.prestamos || [];
   const cuotas = resultado.cuotas || [];
   console.log('CUOTAS RECIBIDAS DEL SERVIDOR:', cuotas);
