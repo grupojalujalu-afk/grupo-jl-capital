@@ -1698,6 +1698,7 @@ async function cargarDatosPanelCliente() {
 
   const prestamos = resultado.prestamos || [];
   const cuotas = resultado.cuotas || [];
+  console.log('CUOTAS RECIBIDAS DEL SERVIDOR:', cuotas);
   const pagos = resultado.pagos || [];
 
   const dinero = valor =>
