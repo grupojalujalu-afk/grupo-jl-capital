@@ -1718,7 +1718,84 @@ async function cargarDatosPanelCliente() {
   const pendientes = cuotas.filter(c =>
     String(c.estado).trim().toUpperCase() !== 'PAGADA'
   );
+// Calcular próximos vencimientos y cuotas atrasadas.
+const fechaCuota = valor => {
+  const texto = String(valor || '').trim();
 
+  let partes;
+
+  if (/^\d{4}-\d{2}-\d{2}/.test(texto)) {
+    partes = texto.substring(0, 10).split('-').map(Number);
+    return new Date(partes[0], partes[1] - 1, partes[2]);
+  }
+
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+    partes = texto.split('/').map(Number);
+    return new Date(partes[2], partes[1] - 1, partes[0]);
+  }
+
+  const fecha = new Date(texto);
+  if (isNaN(fecha.getTime())) return null;
+
+  return new Date(
+    fecha.getFullYear(),
+    fecha.getMonth(),
+    fecha.getDate()
+  );
+};
+
+const hoy = new Date();
+hoy.setHours(0, 0, 0, 0);
+
+const cuotasConFecha = pendientes
+  .map(c => ({
+    ...c,
+    fechaCalculada: fechaCuota(c.vencimiento)
+  }))
+  .filter(c => c.fechaCalculada);
+
+const atrasadas = cuotasConFecha.filter(c =>
+  c.fechaCalculada < hoy
+);
+
+const proximas = cuotasConFecha
+  .filter(c => c.fechaCalculada >= hoy)
+  .sort((a, b) => a.fechaCalculada - b.fechaCalculada);
+
+const cuotaProxima = proximas[0];
+
+const cuotaVencida = atrasadas
+  .sort((a, b) => a.fechaCalculada - b.fechaCalculada)[0];
+
+const mostrarFecha = fecha =>
+  fecha.toLocaleDateString('es-PE');
+
+const indicadorFecha = document.getElementById('clientNextDue');
+const indicadorImporte = document.getElementById('clientNextDueAmount');
+const indicadorAtrasadas = document.getElementById('clientOverdueCount');
+
+if (indicadorAtrasadas) {
+  indicadorAtrasadas.textContent = atrasadas.length;
+}
+
+if (indicadorFecha && indicadorImporte) {
+  if (cuotaProxima) {
+    indicadorFecha.textContent =
+      cuotaProxima.fechaCalculada.getTime() === hoy.getTime()
+        ? 'HOY'
+        : mostrarFecha(cuotaProxima.fechaCalculada);
+
+    indicadorImporte.textContent =
+      'Importe: ' + dinero(cuotaProxima.importe);
+  } else if (cuotaVencida) {
+    indicadorFecha.textContent = 'VENCIDA';
+    indicadorImporte.textContent =
+      'Importe: ' + dinero(cuotaVencida.importe);
+  } else {
+    indicadorFecha.textContent = '--';
+    indicadorImporte.textContent = 'Sin cuotas pendientes';
+  }
+}
   const capitalPendiente = prestamos.reduce((total, p) =>
     total + Number(p.capital_pendiente || 0), 0
   );
