@@ -1699,7 +1699,7 @@ async function cargarDatosPanelCliente() {
 const nombreCliente = String(
   resultado.cliente?.nombre || 'Cliente'
 ).trim();
-
+window.jlcNombreCliente = nombreCliente;
 const saludoCliente = document.getElementById('dashTitle');
 
 if (saludoCliente) {
