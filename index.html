@@ -1699,6 +1699,8 @@ async function cargarDatosPanelCliente() {
 const nombreCliente = String(
   resultado.cliente?.nombre || 'Cliente'
 ).trim();
+  // Guardar los datos personales del cliente.
+window.jlcDatosCliente = resultado.cliente || {};
 window.jlcNombreCliente = nombreCliente;
 const saludoCliente = document.getElementById('dashTitle');
 
