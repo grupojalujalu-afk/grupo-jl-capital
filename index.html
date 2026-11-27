@@ -1768,24 +1768,67 @@ if (tab === 'solicitar') {
   panel.style.display = 'block';
 
   document.getElementById('formSolicitudCliente')
-    .addEventListener('submit', function(e) {
-      e.preventDefault();
+  .addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-      const importe = Number(
-        document.getElementById('solicitudImporte').value
-      );
+    const importe = Number(
+      document.getElementById('solicitudImporte').value
+    );
 
-      const cuotas = Number(
-        document.getElementById('solicitudCuotas').value
-      );
+    const numeroCuotas = Number(
+      document.getElementById('solicitudCuotas').value
+    );
 
-      if (!Number.isFinite(importe) || importe < 50 || importe > 3000) {
-        toast('El importe debe estar entre S/ 50 y S/ 3,000.');
-        return;
+    if (!Number.isFinite(importe) || importe < 50 || importe > 3000) {
+      toast('El importe debe estar entre S/ 50 y S/ 3,000.');
+      return;
+    }
+
+    const token = sessionStorage.getItem('jlcClientToken');
+
+    if (!token) {
+      toast('Tu sesión ha expirado. Ingresa nuevamente.');
+      return;
+    }
+
+    const boton = this.querySelector('button[type="submit"]');
+    boton.disabled = true;
+    boton.textContent = 'Enviando...';
+
+    try {
+      const respuesta = await fetch(JLC_APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=UTF-8'
+        },
+        body: JSON.stringify({
+          accion: 'registrarSolicitudPrestamoCliente',
+          token: token,
+          importe: importe,
+          numeroCuotas: numeroCuotas
+        })
+      });
+
+      const resultado = await respuesta.json();
+
+      if (!resultado.ok) {
+        throw new Error(
+          resultado.mensaje || 'No se pudo registrar la solicitud.'
+        );
       }
 
-      toast('Formulario preparado. En el siguiente paso conectaremos el envío a Google Sheets.');
-    });
+      toast('¡Solicitud enviada correctamente!');
+      this.reset();
+
+    } catch (error) {
+      console.error('Error al enviar solicitud:', error);
+      toast(error.message || 'Error al enviar la solicitud.');
+
+    } finally {
+      boton.disabled = false;
+      boton.textContent = 'Enviar solicitud';
+    }
+  });
 
   return;
 }
