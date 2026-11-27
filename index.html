@@ -532,7 +532,46 @@ async function cargarReportesFinancieros(claveExistente) {
 window.cargarReportesFinancieros = cargarReportesFinancieros;
 
   const money=value=>'S/ '+value.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
-  
+  function setupSolicitudesPrestamo() {
+  const admin = document.getElementById('admin');
+
+  if (!admin || document.getElementById('panelSolicitudesPrestamo')) {
+    return;
+  }
+
+  const panel = document.createElement('div');
+  panel.className = 'box';
+  panel.id = 'panelSolicitudesPrestamo';
+
+  panel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>Gestión de solicitudes de préstamo</h2>
+        <p class="muted">
+          Consulta las solicitudes enviadas por tus clientes.
+        </p>
+      </div>
+      <button type="button" id="btnCargarSolicitudes" class="primary">
+        Actualizar solicitudes
+      </button>
+    </div>
+
+    <div id="resultadoSolicitudes" class="muted">
+      Pulsa actualizar solicitudes para consultar los registros.
+    </div>
+  `;
+
+  const reportes = document.getElementById('reportesFinancieros');
+
+  if (reportes) {
+    admin.insertBefore(panel, reportes);
+  } else {
+    admin.appendChild(panel);
+  }
+
+  document.getElementById('btnCargarSolicitudes')
+    .addEventListener('click', cargarSolicitudesPrestamo);
+}
 function setupReportesFinancieros() {
   const admin = document.getElementById('admin');
 
