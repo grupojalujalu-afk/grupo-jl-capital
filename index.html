@@ -1717,7 +1717,78 @@ function dashTab(button, tab) {
   subtitulo.textContent = titles[tab][1];
 
   let panel = document.getElementById('clientAccountPanel');
+if (tab === 'solicitar') {
+  if (contenido) contenido.style.display = 'none';
 
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'clientAccountPanel';
+    contenido.insertAdjacentElement('afterend', panel);
+  }
+
+  panel.innerHTML = `
+    <div class="box">
+      <h3>Solicitar un préstamo</h3>
+      <p class="muted">
+        Completa los datos para enviar tu solicitud al administrador.
+      </p>
+
+      <form id="formSolicitudCliente">
+        <label for="solicitudImporte">Importe solicitado (S/)</label>
+        <input
+          id="solicitudImporte"
+          type="number"
+          min="50"
+          max="3000"
+          step="0.01"
+          required
+          placeholder="Ejemplo: 500"
+        >
+
+        <label for="solicitudCuotas">Número de cuotas</label>
+        <select id="solicitudCuotas" required>
+          <option value="2">2 cuotas</option>
+          <option value="3">3 cuotas</option>
+          <option value="4">4 cuotas</option>
+          <option value="5">5 cuotas</option>
+          <option value="6">6 cuotas</option>
+        </select>
+
+        <button type="submit" class="primary">
+          Enviar solicitud
+        </button>
+      </form>
+
+      <p class="muted">
+        El envío no garantiza la aprobación del préstamo.
+      </p>
+    </div>
+  `;
+
+  panel.style.display = 'block';
+
+  document.getElementById('formSolicitudCliente')
+    .addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const importe = Number(
+        document.getElementById('solicitudImporte').value
+      );
+
+      const cuotas = Number(
+        document.getElementById('solicitudCuotas').value
+      );
+
+      if (!Number.isFinite(importe) || importe < 50 || importe > 3000) {
+        toast('El importe debe estar entre S/ 50 y S/ 3,000.');
+        return;
+      }
+
+      toast('Formulario preparado. En el siguiente paso conectaremos el envío a Google Sheets.');
+    });
+
+  return;
+}
   if (tab === 'cuenta') {
     if (contenido) contenido.style.display = 'none';
 
