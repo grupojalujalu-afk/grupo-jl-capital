@@ -572,6 +572,125 @@ window.cargarReportesFinancieros = cargarReportesFinancieros;
   document.getElementById('btnCargarSolicitudes')
     .addEventListener('click', cargarSolicitudesPrestamo);
 }
+  async function cargarSolicitudesPrestamo(claveExistente) {
+  const adminKey = claveExistente || prompt(
+    'Ingresa la clave administrativa para consultar las solicitudes:'
+  );
+
+  if (!adminKey) {
+    toast('Consulta de solicitudes cancelada.');
+    return;
+  }
+
+  const resultadoDiv = document.getElementById('resultadoSolicitudes');
+
+  if (resultadoDiv) {
+    resultadoDiv.textContent = 'Cargando solicitudes...';
+  }
+
+  try {
+    const response = await fetch(JLC_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        accion: 'listarSolicitudesPrestamo',
+        adminKey: adminKey
+      })
+    });
+
+    const texto = await response.text();
+    let resultado;
+
+    try {
+      resultado = JSON.parse(texto);
+    } catch (error) {
+      throw new Error('El servidor no devolvió una respuesta válida.');
+    }
+
+    if (!response.ok || !resultado || resultado.ok !== true) {
+      throw new Error(
+        resultado?.mensaje || 'No se pudieron cargar las solicitudes.'
+      );
+    }
+
+    const escapar = valor =>
+      String(valor ?? '').replace(/[&<>"']/g, caracter => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[caracter]);
+
+    const dinero = valor =>
+      'S/ ' + Number(valor || 0).toLocaleString('es-PE', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+    if (!resultado.solicitudes.length) {
+      resultadoDiv.innerHTML =
+        '<p>No hay solicitudes registradas.</p>';
+      toast('No hay solicitudes pendientes de consulta.');
+      return;
+    }
+
+    resultadoDiv.innerHTML = `
+      <p><strong>Total de solicitudes:</strong>
+        ${resultado.solicitudes.length}
+      </p>
+
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>DNI</th>
+              <th>Importe</th>
+              <th>Cuotas</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${resultado.solicitudes.map(solicitud => {
+              const fecha = solicitud.fecha_solicitud
+                ? new Date(solicitud.fecha_solicitud)
+                    .toLocaleDateString('es-PE')
+                : 'No disponible';
+
+              return `
+                <tr>
+                  <td>${escapar(solicitud.nombre)}</td>
+                  <td>${escapar(solicitud.dni)}</td>
+                  <td>${dinero(solicitud.importe_solicitado)}</td>
+                  <td>${escapar(solicitud.numero_cuotas)}</td>
+                  <td>${escapar(fecha)}</td>
+                  <td>${escapar(solicitud.estado)}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    toast('Solicitudes cargadas correctamente.');
+
+  } catch (error) {
+    console.error('Error al cargar solicitudes:', error);
+
+    if (resultadoDiv) {
+      resultadoDiv.textContent = error.message;
+    }
+
+    toast(error.message || 'Error al consultar solicitudes.');
+  }
+}
+
+window.cargarSolicitudesPrestamo = cargarSolicitudesPrestamo;
 function setupReportesFinancieros() {
   const admin = document.getElementById('admin');
 
