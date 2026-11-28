@@ -570,7 +570,9 @@ window.cargarReportesFinancieros = cargarReportesFinancieros;
   }
 
   document.getElementById('btnCargarSolicitudes')
-    .addEventListener('click', cargarSolicitudesPrestamo);
+  .addEventListener('click', () => {
+    cargarSolicitudesPrestamo();
+  });
 }
   async function cargarSolicitudesPrestamo(claveExistente) {
   const adminKey = claveExistente || prompt(
